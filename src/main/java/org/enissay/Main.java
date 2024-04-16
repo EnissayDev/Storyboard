@@ -16,6 +16,10 @@ import java.awt.*;
 
 public class Main {
 
+    /**
+     * TO DO - Effects test
+     * @param args
+     */
     public static void main(String[] args) {
         for (Easing value : Easing.values()) {
             System.out.println(value.getIndex() + " " + value.toString());
@@ -60,5 +64,26 @@ public class Main {
         //SBObject sp2 = new SBObject(Layer.BACKGROUND, Origin.CENTRE, "Camellia_ParallelUniverseShifter_Jacket_2732x1536.jpg", 0, 0);
 
         System.out.println(sb.toString());
+        //output:
+        /**
+         * [Events]
+         * //Background and Video events
+         * //Storyboard Layer 0 (Background)
+         * Sprite,Background,Centre,"dfsfsdfsddfsfds\ffsgdfdssfd.png",320,240
+         *  L,10000,30
+         *   F,0,1000,20000,0.5,1
+         *   M,0,1000,,100,300,234,432
+         *   V,0,975,,0.2,0.0003
+         *  S,0,975,980,0.2
+         *  R,0,980,,0.2,0.3
+         * Animation,Background,Centre,"dfsfsdfsddfsfds\XDXDXD.png",320,240,5,30,LoopForever
+         *  P,0,1000,3000,H
+         *  C,0,1000,3000,0,0,255,0,255,0
+         * //Storyboard Layer 1 (Fail)
+         * //Storyboard Layer 2 (Pass)
+         * //Storyboard Layer 3 (Foreground)
+         * //Storyboard Layer 4 (Overlay)
+         * //Storyboard Sound Samples
+         */
     }
 }
