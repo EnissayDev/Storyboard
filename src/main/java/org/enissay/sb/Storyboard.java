@@ -1,12 +1,21 @@
 package org.enissay.sb;
 
+import com.eztech.util.JavaClassFinder;
+import org.enissay.osu.Beatmap;
+import org.enissay.osu.BeatmapManager;
+import org.enissay.sb.effects.Effect;
 import org.enissay.sb.obj.Layer;
 import org.enissay.sb.obj.SBObject;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Storyboard{
@@ -64,22 +73,46 @@ public class Storyboard{
      * //Storyboard Sound Samples
      */
 
-    private String path;
+    private String path, diffName;
+    private Beatmap beatmap;
     private LinkedList<SBObject> objects;
+    private LinkedList<Class<? extends Effect>> effects;
 
-    public Storyboard(String path, LinkedList<SBObject> obj) {
+    public Storyboard(String path, LinkedList<SBObject> obj, String diffName) {
         this.path = path;
         this.objects = obj;
+        this.beatmap = BeatmapManager.detectBeatmap(path, diffName);
     }
 
-    public Storyboard(String path) {
+    public Storyboard(String path, String diffName) {
         this.path = path;
         this.objects = new LinkedList<>();
+        this.beatmap = BeatmapManager.detectBeatmap(path, diffName);
+        this.effects = new LinkedList<>();
+        /*JavaClassFinder classFinder = new JavaClassFinder();
+        List<Class<? extends Effect>> classes = classFinder.findAllMatchingTypes(Effect.class);
+        classes.forEach(clazz -> {
+            if (!clazz.getSimpleName().equals("Effect")) {
+                try {
+                    Method renderMethod = clazz.getMethod("render", Storyboard.class);
+                    renderMethod.invoke(clazz.newInstance(), this);
+                } catch (NoSuchMethodException e) {
+                    System.err.println("No render method found in class " + clazz.getSimpleName());
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                    System.err.println("Error invoking render method for class " + clazz.getSimpleName() + ": " + e.getMessage());
+                }
+            }
+        });*/
+
     }
 
     public Storyboard addObject(final SBObject obj) {
         if (!objects.contains(obj)) objects.add(obj);
         return this;
+    }
+
+    public SBObject getSBObject(String name) {
+        return objects.stream().filter(object -> object.getName().equals(name)).findAny().orElse(null);
     }
 
     public LinkedList<SBObject> getObjects() {
@@ -88,6 +121,29 @@ public class Storyboard{
 
     public List<SBObject> getObjects(final Layer layer) {
         return this.getObjects().stream().filter(sbObject -> sbObject.getLayer() == layer).collect(Collectors.toList());
+    }
+
+    public void addAffects(Class<? extends Effect> effects[]) {
+        /*Arrays.asList(effects).forEach(effect -> {
+            if (!this.effects.contains(effect)) this.effects.add(effect);
+        });*/
+        Arrays.asList(effects).forEach(clazz -> {
+            if (!clazz.getSimpleName().equals("Effect")) {
+                try {
+                    if (!this.effects.contains(clazz)) this.effects.add(clazz);
+                    Method renderMethod = clazz.getMethod("render", Storyboard.class);
+                    renderMethod.invoke(clazz.newInstance(), this);
+                } catch (NoSuchMethodException e) {
+                    System.err.println("No render method found in class " + clazz.getSimpleName());
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                    System.err.println("Error invoking render method for class " + clazz.getSimpleName() + ": " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    public LinkedList<Class<? extends Effect>> getEffects() {
+        return effects;
     }
 
     @Override
@@ -119,22 +175,88 @@ public class Storyboard{
         return stringBuilder.toString();
     }
 
-    public void write() {
-        try {
+    public Beatmap getBeatmap() {
+        if (beatmap == null && diffName != null) {
+            return BeatmapManager.detectBeatmap(path, diffName);
+        }
+        System.out.println(path + "\\" + beatmap.getArtist() + " - " + beatmap.getTitle() + " (" + beatmap.getMapper() + ").osb");
+        return beatmap;
+    }
 
-            FileOutputStream outputStream = new FileOutputStream("test.osb");
+    public void write() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("sb").getFile());
+        String destinationPath = path + "\\"; // Specify the destination path here
+        File sourceDir = file;
+        try {
+            FileOutputStream outputStream = new FileOutputStream(path + "\\" + beatmap.getArtist() + " - " + beatmap.getTitle() + " (" + beatmap.getMapper() + ").osb");
             byte[] strToBytes = toString().getBytes();
             outputStream.write(strToBytes);
 
             outputStream.close();
-            /*final FileWriter fileWriter = new FileWriter(path + "test.osb");
-            fileWriter.write("[Events]");
-            fileWriter.write("//Background and Video events");
-            fileWriter.write("//Storyboard Layer 0 (Background)");
-            fileWriter.close();*/
-            System.out.println("Successfully wrote to the file.");
+            final FileWriter fileWriter = new FileWriter(path + "\\" + beatmap.getArtist() + " - " + beatmap.getTitle() + " (" + beatmap.getMapper() + ").osb");
+            fileWriter.write(toString());
+            fileWriter.close();
+
+            File destinationDir = new File(destinationPath);
+            if (!destinationDir.exists()) {
+                destinationDir.mkdirs();
+            }
+
+            deleteDirectory(new File(destinationPath + File.separator + "sb").toPath());
+            copyDirectory(sourceDir, new File(destinationPath + File.separator + "sb"));
+
+            System.out.println("Successfully copied 'sb' directory to: " + destinationPath);
+            /*deleteDirectory(new File(path + "\\" + file.getName()).toPath());
+
+            if (file.exists()) {
+                Files.copy(file.toPath(),
+                        (new File(path + "\\" + file.getName())).toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
+                for (File listFile : file.listFiles()) {
+                    Files.copy(listFile.toPath(),
+                            (new File(path + "\\" + file.getName() + "\\" + listFile.getName())).toPath(),
+                            StandardCopyOption.REPLACE_EXISTING);
+                }
+            }*/
+            //Arrays.stream(file.list()).forEach(name -> System.out.println(name));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void copyDirectory(File sourceDir, File destinationDir) throws IOException {
+        if (sourceDir.isDirectory()) {
+            if (!destinationDir.exists()) {
+                destinationDir.mkdirs();
+            }
+
+            String[] files = sourceDir.list();
+            for (String file : files) {
+                File srcFile = new File(sourceDir, file);
+                File destFile = new File(destinationDir, file);
+                // Recursive copy
+                copyDirectory(srcFile, destFile);
+            }
+        } else {
+            // Copy the file
+            try (InputStream in = new FileInputStream(sourceDir);
+                 OutputStream out = new FileOutputStream(destinationDir)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+            }
+        }
+    }
+
+    private void deleteDirectory(Path directory) throws IOException {
+        if (Files.exists(directory)) {
+            Files.walk(directory)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
         }
     }
 }

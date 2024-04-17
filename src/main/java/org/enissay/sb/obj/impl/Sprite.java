@@ -9,18 +9,21 @@ import org.enissay.sb.obj.Origin;
 import org.enissay.sb.obj.SBObject;
 
 import java.awt.*;
+import java.util.Map;
+import java.util.Vector;
 
 public class Sprite extends SBObject implements ISBObject{
 
+    public Sprite(String name, Layer layer, Origin origin, String filePath, double x, double y) {
+        super(name, layer, origin, filePath, x, y);
+    }
+
+    public Sprite(String name, Layer layer, Origin origin, String filePath) {
+        super(name, layer, origin, filePath);
+    }
+
     //private SBObject sbObject;
 
-    public Sprite(Layer layer, Origin origin, String filePath, double x, double y) {
-        super(layer, origin, filePath, x, y);
-    }
-
-    public Sprite(Layer layer, Origin origin, String filePath) {
-        super(layer, origin, filePath);
-    }
 
     /*public Sprite(Layer layer, Origin origin, String filePath, double x, double y) {
         this.sbObject = new SBObject(layer, origin, filePath, x, y);
@@ -135,6 +138,8 @@ public class Sprite extends SBObject implements ISBObject{
     @Override
     public Command Fade(Easing easing, long startTime, long endTime, double startOpacity, double endOpacity) {
         Command cmd = new Command(Commands.FADE, easing, startTime, endTime, new String[]{String.valueOf(startOpacity), String.valueOf(endOpacity)});
+        /*setStartTime(startTime);
+        setEndTime(endTime);*/
         this.addCommand(cmd);
         return cmd;
     }
@@ -148,6 +153,10 @@ public class Sprite extends SBObject implements ISBObject{
     public Command Move(Easing easing, long startTime, long endTime, double startX, double startY, double endX, double endY) {
         Command cmd = new Command(Commands.MOVE, easing, startTime, endTime, new String[]{String.valueOf(startX),
                 String.valueOf(startY), String.valueOf(endX), String.valueOf(endY)});
+        setEndX(endX);
+        setEndY(endY);
+        //setX(endX);
+        //setY(endY);
         this.addCommand(cmd);
         return cmd;
     }

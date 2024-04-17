@@ -1,24 +1,29 @@
 package org.enissay.sb.obj;
 
 import org.enissay.sb.cmds.Command;
+import org.enissay.sb.cmds.Easing;
 import org.enissay.sb.cmds.LoopType;
 
+import javax.vecmath.Vector2d;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class SBObject {
 
     private LinkedList<Command> commands;
+    private String name;
     private Layer layer;
     private Origin origin;
     private String filePath;
-    private double x, y;
+    private double x, y, endX, endY;
     private int frameCount, frameDelay;
     private LoopType loopType;
 
     //Moving image
-    public SBObject(Layer layer, Origin origin, String filePath, double x, double y, int frameCount, int frameDelay, LoopType loopType) {
+    public SBObject(String name, Layer layer, Origin origin, String filePath, double x, double y, int frameCount, int frameDelay, LoopType loopType) {
+        this.name = name;
         this.layer = layer;
         this.origin = origin;
         this.filePath = filePath;
@@ -30,7 +35,8 @@ public class SBObject {
         this.commands = new LinkedList<>();
     }
 
-    public SBObject(Layer layer, Origin origin, String filePath, int frameCount, int frameDelay, LoopType loopType) {
+    public SBObject(String name, Layer layer, Origin origin, String filePath, int frameCount, int frameDelay, LoopType loopType) {
+        this.name = name;
         this.layer = layer;
         this.origin = origin;
         this.filePath = filePath;
@@ -43,7 +49,8 @@ public class SBObject {
     }
 
     //Basic image
-    public SBObject(Layer layer, Origin origin, String filePath, double x, double y) {
+    public SBObject(String name, Layer layer, Origin origin, String filePath, double x, double y) {
+        this.name = name;
         this.layer = layer;
         this.origin = origin;
         this.filePath = filePath;
@@ -52,13 +59,54 @@ public class SBObject {
         this.commands = new LinkedList<>();
     }
 
-    public SBObject(Layer layer, Origin origin, String filePath) {
+    public SBObject(String name, Layer layer, Origin origin, String filePath) {
+        this.name = name;
         this.layer = layer;
         this.origin = origin;
         this.filePath = filePath;
         this.x = origin.getX();
         this.y = origin.getY();
         this.commands = new LinkedList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /*public long getStartTime() {
+        return Objects.isNull(startTime) ? 0 : startTime;
+    }
+
+    public long getEndTime() {
+        return Objects.isNull(endTime) ? 0 : endTime;
+    }*/
+
+    public double getEndX() {
+        return Objects.isNull(endX) ? 0 : endX;
+    }
+
+    public double getEndY() {
+        return Objects.isNull(endY) ? 0 : endY;
+    }
+
+    /*public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }*/
+
+    public void setEndX(double endX) {
+        this.endX = endX;
+    }
+
+    public void setEndY(double endY) {
+        this.endY = endY;
     }
 
     public String getFilePath() {
@@ -141,6 +189,31 @@ public class SBObject {
             return d.toString();
 
         return new BigDecimal(d.toString()).stripTrailingZeros().toPlainString();
+    }
+
+    public Vector2d getPositionAt(final long time, final Easing easing) {
+        return null;//getPosition2At(time, easing, getStartTime(), getEndTime(), new Vector2d(getEndX(), getEndY()));
+    }
+
+    public Vector2d getPosition2At(final Command command, final long time, final Easing easing, long startTime, long endTime, final Vector2d destination) {
+        if (command != null && command.getParent() != null) {
+            AtomicLong end = new AtomicLong(0);
+            command.getParent().getSubCommands().forEach(subCommand -> {
+                end.addAndGet(subCommand.getEndTime());
+            });
+            end.set(end.get()*Integer.valueOf(command.getParent().getParams()[0])-command.getParent().getStartTime());
+            startTime += command.getParent().getStartTime();
+            endTime = end.get();
+        }
+        final long duration = endTime - startTime;
+
+        final double delta = (time - startTime);
+        final double result = delta/duration;
+
+        final double p = duration > 0 ? Easing.ease(easing, result) : 0;
+        double x = (delta > 0 && delta <= duration) ? (getX() + (destination.getX() - getX()) * p) : getX();
+        double y = (delta > 0 && delta <= duration) ? (getY() + (destination.getY() - getY()) * p) : getY();
+        return new Vector2d(x,y);
     }
 
 

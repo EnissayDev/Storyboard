@@ -12,12 +12,12 @@ import java.awt.*;
 
 public class Animation extends SBObject implements ISBObject{
 
-    public Animation(Layer layer, Origin origin, String filePath, double x, double y, int frameCount, int frameDelay, LoopType loopType) {
-        super(layer, origin, filePath, x, y, frameCount, frameDelay, loopType);
+    public Animation(String name, Layer layer, Origin origin, String filePath, double x, double y, int frameCount, int frameDelay, LoopType loopType) {
+        super(name, layer, origin, filePath, x, y, frameCount, frameDelay, loopType);
     }
 
-    public Animation(Layer layer, Origin origin, String filePath, int frameCount, int frameDelay, LoopType loopType) {
-        super(layer, origin, filePath, frameCount, frameDelay, loopType);
+    public Animation(String name, Layer layer, Origin origin, String filePath, int frameCount, int frameDelay, LoopType loopType) {
+        super(name, layer, origin, filePath, frameCount, frameDelay, loopType);
     }
 
     /*private SBObject sbObject;
