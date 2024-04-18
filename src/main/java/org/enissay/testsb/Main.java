@@ -1,22 +1,27 @@
 package org.enissay.testsb;
 
 import org.enissay.sb.*;
-import org.enissay.sb.cmds.Easing;
 import org.enissay.testsb.effects.Background;
+import org.enissay.testsb.effects.TextGenerator;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
     /**
-     * TO DO - Effects test | BPM Counter
+     * TO DO - BPM Counter - Text generator
      * @param args
      */
     public static void main(String[] args) {
-        for (Easing value : Easing.values()) {
-            System.out.println(value.getIndex() + " " + value.toString());
-        }
         //Create storyboard with path directory
-        Storyboard sb = new Storyboard("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638474153553113169-song", "Insane");
-        sb.addAffects(new Class[]{Background.class});
+        Storyboard sb = new Storyboard("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638474153553113169-song", "Insane")
+                .addEffect(Background.class, 5*1000,40*1000, null)
+                .addEffect(TextGenerator.class, 5*1000,40*1000, new String[]{"Consolas", "10", "Hello there"});
+
+        final double[] bpmSections = sb.getBeatmap().getBPMSections();
+        for (int i = 0; i < bpmSections.length; i++) {
+            System.out.println("Section " + (i+1) + ": " + bpmSections[i]);
+        }
         /*System.out.println(sb.getBeatmap());
 
         //Create a sprite example in the background

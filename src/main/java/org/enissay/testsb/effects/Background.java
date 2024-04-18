@@ -10,10 +10,10 @@ import org.enissay.sb.utils.OsuUtils;
 public class Background implements Effect {
 
     private double opacity = 1;
-    private long startTime = 5*1000, endTime = 40*1000;
+    //private long startTime = 5*1000, endTime = 40*1000;
 
     @Override
-    public void render(Storyboard storyboard) {
+    public void render(Storyboard storyboard, long startTime, long endTime, String[] params) {
         //opacity = Double.parseDouble(params[0]);
         Sprite sp1 = new Sprite("BG", Layer.BACKGROUND, Origin.CENTRE, "sb\\test\\img.png");
         var height = OsuUtils.getImageDim("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638474153553113169-song\\" + sp1.getFilePath()).getHeight();

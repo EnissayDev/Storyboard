@@ -1,5 +1,7 @@
 package org.enissay.osu;
 
+import org.enissay.osu.data.TimingPoint;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -43,43 +45,8 @@ public class BeatmapManager {
         for (File file : listOfFiles) {
             if (file.isFile()) {
                 String[] filename = file.getName().split("\\.(?=[^\\.]+$)");
-                System.out.println("Found: " + filename[0] + "." + filename[1]);
+                //System.out.println("Found: " + filename[0] + "." + filename[1]);
                 if(filename[0].contains("[" + diffName + "]") && filename[1].equals("osu")) {
-                    //FOR TIMING POINTS
-                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                        boolean timingPointsSectionReached = false;
-                        boolean hitObjectsSectionReached = false;
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            if (timingPointsSectionReached && !hitObjectsSectionReached) {
-                                if (!line.trim().equals("[HitObjects]")) {
-                                    //HERE
-                                    System.out.println(line);
-                                } else {
-                                    hitObjectsSectionReached = true;
-                                }
-                            } else if (line.trim().equals("[TimingPoints]")) {
-                                timingPointsSectionReached = true;
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //FOR HITOBJECTS
-                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                        boolean hitObjectsSectionReached = false;
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            if (hitObjectsSectionReached) {
-                                //HERE
-                                System.out.println(line);
-                            } else if (line.trim().equals("[HitObjects]")) {
-                                hitObjectsSectionReached = true;
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                     try(BufferedReader br = new BufferedReader(new FileReader(file))) {
                         String title = null;
                         String artist = null;
@@ -98,6 +65,49 @@ public class BeatmapManager {
                         }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    }
+                    //FOR TIMING POINTS
+                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                        boolean timingPointsSectionReached = false;
+                        boolean hitObjectsSectionReached = false;
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            if (timingPointsSectionReached && !hitObjectsSectionReached) {
+                                if (!line.trim().equals("[HitObjects]")) {
+                                    //HERE
+                                    if (beatmap != null) {
+                                        String[] args = line.split(",");
+                                        if (args.length == 8) {
+                                            beatmap.addTimingPoint(new TimingPoint(Double.parseDouble(args[0]), Double.parseDouble(args[1]),
+                                                    Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[6]),
+                                                    (Integer.parseInt(args[6]) == 1), Integer.parseInt(args[7])));
+                                        }
+                                    }
+                                    //System.out.println(line);
+                                } else {
+                                    hitObjectsSectionReached = true;
+                                }
+                            } else if (line.trim().equals("[TimingPoints]")) {
+                                timingPointsSectionReached = true;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //FOR HITOBJECTS
+                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                        boolean hitObjectsSectionReached = false;
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            if (hitObjectsSectionReached) {
+                                //HERE
+                                //System.out.println(line);
+                            } else if (line.trim().equals("[HitObjects]")) {
+                                hitObjectsSectionReached = true;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }

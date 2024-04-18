@@ -123,20 +123,34 @@ public class Storyboard{
         return this.getObjects().stream().filter(sbObject -> sbObject.getLayer() == layer).collect(Collectors.toList());
     }
 
-    public void addAffects(Class<? extends Effect> effects[]) {
+    public Storyboard addEffect(Class<? extends Effect> clazz, long startTime, long endTime, String[] params) {
+        Map<Class<? extends Effect>, Object[]> map = new HashMap<>();
+        map.put(clazz, new Object[]{startTime, endTime, params});
+        addEffects(map);
+        return this;
+    }
+
+    public void addEffects(Map<Class<? extends Effect>, Object[]> effects) {
         /*Arrays.asList(effects).forEach(effect -> {
             if (!this.effects.contains(effect)) this.effects.add(effect);
         });*/
-        Arrays.asList(effects).forEach(clazz -> {
+        effects.keySet().forEach(clazz -> {
             if (!clazz.getSimpleName().equals("Effect")) {
                 try {
                     if (!this.effects.contains(clazz)) this.effects.add(clazz);
-                    Method renderMethod = clazz.getMethod("render", Storyboard.class);
-                    renderMethod.invoke(clazz.newInstance(), this);
+                    Method renderMethod = clazz.getMethod("render", Storyboard.class, long.class, long.class, String[].class);
+                    try {
+                        final Object[] values = effects.get(clazz);
+                        if (values.length >= 3)
+                            renderMethod.invoke(clazz.newInstance(), this, values[0], values[1], values[2]);
+                        else throw new RuntimeException("Not enough arguments for the effect " + clazz.getSimpleName() + " expected 3 got " + values.length);
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                        System.err.println("Error invoking render method for class " + clazz.getSimpleName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                    }
+
                 } catch (NoSuchMethodException e) {
                     System.err.println("No render method found in class " + clazz.getSimpleName());
-                } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                    System.err.println("Error invoking render method for class " + clazz.getSimpleName() + ": " + e.getMessage());
                 }
             }
         });
@@ -179,7 +193,7 @@ public class Storyboard{
         if (beatmap == null && diffName != null) {
             return BeatmapManager.detectBeatmap(path, diffName);
         }
-        System.out.println(path + "\\" + beatmap.getArtist() + " - " + beatmap.getTitle() + " (" + beatmap.getMapper() + ").osb");
+        //System.out.println(path + "\\" + beatmap.getArtist() + " - " + beatmap.getTitle() + " (" + beatmap.getMapper() + ").osb");
         return beatmap;
     }
 
