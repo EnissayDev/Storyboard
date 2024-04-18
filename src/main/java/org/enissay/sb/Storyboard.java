@@ -1,6 +1,5 @@
 package org.enissay.sb;
 
-import com.eztech.util.JavaClassFinder;
 import org.enissay.osu.Beatmap;
 import org.enissay.osu.BeatmapManager;
 import org.enissay.sb.effects.Effect;
@@ -76,6 +75,7 @@ public class Storyboard{
     private String path, diffName;
     private Beatmap beatmap;
     private LinkedList<SBObject> objects;
+    private LinkedList<String> texts;
     private LinkedList<Class<? extends Effect>> effects;
 
     public Storyboard(String path, LinkedList<SBObject> obj, String diffName) {
@@ -89,6 +89,7 @@ public class Storyboard{
         this.objects = new LinkedList<>();
         this.beatmap = BeatmapManager.detectBeatmap(path, diffName);
         this.effects = new LinkedList<>();
+        this.texts = new LinkedList<>();
         /*JavaClassFinder classFinder = new JavaClassFinder();
         List<Class<? extends Effect>> classes = classFinder.findAllMatchingTypes(Effect.class);
         classes.forEach(clazz -> {
@@ -104,6 +105,18 @@ public class Storyboard{
             }
         });*/
 
+    }
+
+    public LinkedList<String> getTexts() {
+        return texts;
+    }
+
+    public void addText(String text) {
+        this.texts.add(text);
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public Storyboard addObject(final SBObject obj) {

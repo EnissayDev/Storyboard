@@ -2,8 +2,11 @@ package org.enissay.osu;
 
 import org.enissay.osu.data.TimingPoint;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 
 public class Beatmap {
@@ -48,14 +51,12 @@ public class Beatmap {
         return timingPoints;
     }
 
-    public double[] getBPMSections() {
-        double[] bpm = new double[timingPoints.stream().filter(TimingPoint::isUninherited).collect(Collectors.toList()).size()];
-        if (timingPoints.size() > 0) {
-            timingPoints.stream().filter(TimingPoint::isUninherited).forEach(timingPoint -> {
-                bpm[bpm.length - 1] = timingPoint.getBPM();
-            });
-        }
-        return bpm;
+    public LinkedList<TimingPoint> getBPMSections() {
+        LinkedList<TimingPoint> list = new LinkedList<>();
+        if (!timingPoints.isEmpty())
+            list.addAll(timingPoints.stream().filter(TimingPoint::isUninherited)
+                    .collect(Collectors.toCollection(ConcurrentLinkedDeque::new)));
+        return list;
     }
 
     public TimingPoint getTimingPointAt(double time) {

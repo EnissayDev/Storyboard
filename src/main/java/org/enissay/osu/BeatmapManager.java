@@ -78,6 +78,7 @@ public class BeatmapManager {
                                     if (beatmap != null) {
                                         String[] args = line.split(",");
                                         if (args.length == 8) {
+                                            //System.out.println(line);
                                             beatmap.addTimingPoint(new TimingPoint(Double.parseDouble(args[0]), Double.parseDouble(args[1]),
                                                     Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[6]),
                                                     (Integer.parseInt(args[6]) == 1), Integer.parseInt(args[7])));

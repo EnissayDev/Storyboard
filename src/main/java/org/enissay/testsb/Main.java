@@ -1,9 +1,13 @@
 package org.enissay.testsb;
 
+import org.enissay.osu.data.TimingPoint;
 import org.enissay.sb.*;
 import org.enissay.testsb.effects.Background;
+import org.enissay.testsb.effects.Particles;
 import org.enissay.testsb.effects.TextGenerator;
 
+import java.awt.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
@@ -14,54 +18,48 @@ public class Main {
      */
     public static void main(String[] args) {
         //Create storyboard with path directory
-        Storyboard sb = new Storyboard("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638474153553113169-song", "Insane")
+        Storyboard sb = new Storyboard("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638490582521645685-audio", "Insane")
                 .addEffect(Background.class, 5*1000,40*1000, null)
-                .addEffect(TextGenerator.class, 5*1000,40*1000, new String[]{"Consolas", "10", "Hello there"});
+                .addEffect(TextGenerator.class, 5*1000,10*1000, new String[]{"Cambria", "20", "HELLO THERE\nUwU"})
+                .addEffect(TextGenerator.class, 10*1000,20*1000, new String[]{"Candara Light", "20", "HOW ARE YOU BRO"})
+                .addEffect(Particles.class, 0, 20*1000, null);
+        String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
-        final double[] bpmSections = sb.getBeatmap().getBPMSections();
-        for (int i = 0; i < bpmSections.length; i++) {
-            System.out.println("Section " + (i+1) + ": " + bpmSections[i]);
+        // Print the available font names
+        System.out.println("Available Fonts:");
+        for (String font : fonts) {
+            System.out.println(font);
         }
-        /*System.out.println(sb.getBeatmap());
-
-        //Create a sprite example in the background
-        Sprite sp1 = new Sprite("BG", Layer.BACKGROUND, Origin.CENTRE, "sb\\bg.png");
-        Sprite sp2 = new Sprite("overlay", Layer.OVERLAY, Origin.CENTRE, "sb\\blood.png");
-        Sprite test = new Sprite("test", Layer.FOREGROUND, Origin.CENTRE, "sb\\glow.png");
-        //Command fade = test.Fade(0, 2*1000, 0, 1);
-        //Command fade2 = test.Fade(2*1000, 4*1000, 1, 0);
-        //Command scale = test.Scale(Easing.EASING_OUT, 0, 2*1000, 1, 0.2);
-        //Command scale2 = test.Scale(Easing.EASING_OUT,2*1000, 4*1000, 0.2, 1);
-
-        //shake(sp1, 0* 1000, 40 * 1000, 1000, 15);
-        //Animation sp4 = new Animation("newanimation", Layer.BACKGROUND, Origin.CENTRE, "sb\\test\\img.png", 30, 10, LoopType.LOOP_FOREVER);
-        //sp4.Scale(Easing.EASING_IN, 7*1000, 11*1000, 5, 1);
-        final Command loop = test.createLoop(5*1000, 5);
-        //loop.addSubCommand(fade);
-        //loop.addSubCommand(fade2);
-        test.Scale(5*1000, 5*1000, .2, .2);
-        //loop.addSubCommand(scale);
-        //loop.addSubCommand(scale2);
-        loop.addSubCommand(test.Color(Easing.EASING_IN, 0, 2*1000, Color.GREEN, Color.PINK));
-        Command moveCmd = test.Move(Easing.EASING_OUT, 0, 2*1000, test.getX(), test.getY(), test.getX() + 100, test.getY() + 100);
-        loop.addSubCommand(moveCmd);
-
-        sp2.Fade(0, 1000*3, 0, 1);
-        sp2.Fade(3*1000, 6*1000, 1, 0);
-
-        sb.addObject(sp1);
-        sb.addObject(sp2);
-        //sb.addObject(test);
-        //sb.addObject(sp4);
-        */
         System.out.println(sb.toString());
-
+        List<TimingPoint> bpmSections = sb.getBeatmap().getBPMSections();
+        int size = bpmSections.size();
+        for (int i = 0; i < size; i++) {
+            TimingPoint currentSection = bpmSections.get(i);
+            long nextTime = 0;
+            if (i < size - 1) {
+                nextTime = (long)bpmSections.get(i + 1).getTime();
+            }else nextTime = Integer.MAX_VALUE;
+            System.out.println("BPM: " + (long)currentSection.getBPM() + " [" + currentSection.getTime() + ", " + nextTime + "]");
+            //sb.addEffect(TextGenerator.class, (long) currentSection.getTime(), nextTime, new String[]{"Old Century", "20", "BPM: " + (long)currentSection.getBPM()});
+        }
         sb.write();
 
-        /*for (int i = 0; i < 40; i++) {
-            Vector2d pos = test.getPosition2At(moveCmd, i*1000, Easing.EASING_OUT, 0, 2*1000, new Vector2d(test.getX() + 100, test.getY() + 100));
-            System.out.println("time: " + i + "s ->" + " currX: " + pos.getX() + " currY: " + pos.getY());
-            //System.out.println("testX: " + sp1.getX() + " testY: " + sp1.getY());
+        sb.getBeatmap().getBPMSections().forEach(tb -> {
+            //System.out.println("Section " + (int)tb.getTime() + ": " + (int)tb.getBPM());
+        });
+
+        /*System.out.println(sb.toString());
+
+        sb.write();*/
+        /*String text = "hello\nbro";
+        List<Character> blockedList = new ArrayList<Character>();
+        blockedList.add('\n');
+        System.out.println(text.chars().count());
+        for (int i = 0; i < text.chars().count(); i++) {
+            if (!blockedList.contains(text.charAt(i)) && !blockedList.contains(text.charAt(i))) {
+                final char c = text.charAt(i);
+                convert(Character.toString(c), Character.toString(c));
+            }
         }*/
     }
 

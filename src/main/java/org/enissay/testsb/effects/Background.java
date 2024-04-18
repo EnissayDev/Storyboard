@@ -16,7 +16,8 @@ public class Background implements Effect {
     public void render(Storyboard storyboard, long startTime, long endTime, String[] params) {
         //opacity = Double.parseDouble(params[0]);
         Sprite sp1 = new Sprite("BG", Layer.BACKGROUND, Origin.CENTRE, "sb\\test\\img.png");
-        var height = OsuUtils.getImageDim("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638474153553113169-song\\" + sp1.getFilePath()).getHeight();
+        System.out.println("BG: " + storyboard.getPath() + "\\" + sp1.getFilePath());
+        var height = OsuUtils.getImageDim(storyboard.getPath() + "\\" + sp1.getFilePath()).getHeight();
         sp1.Scale(startTime, startTime, 480.0f / height, 480.0f / height);
         sp1.Fade(startTime - 500, startTime, 0, opacity);
         sp1.Fade(endTime, endTime + 500, opacity, 0);

@@ -10,7 +10,7 @@ public enum Origin {
     CENTRE_LEFT(0, EDITOR_Y/2, "CentreLeft"),
     TOP_RIGHT(EDITOR_X, 0, "TopRight"),
     BOTTOM_CENTRE(EDITOR_X/2, EDITOR_Y, "BottomCentre"),
-    TOP_CENTRE(EDITOR_X, 0, "TopCentre"),
+    TOP_CENTRE(EDITOR_X/2, 0, "TopCentre"),
     CENTRE_RIGHT(EDITOR_X, EDITOR_Y/2, "CentreRight"),
     BOTTOM_LEFT(0, EDITOR_Y, "BottomLeft"),
     BOTTOM_RIGHT(EDITOR_X, EDITOR_Y, "BottomRight");
