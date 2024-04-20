@@ -1,8 +1,10 @@
 package org.enissay.sb.obj;
 
+import org.enissay.sb.Storyboard;
 import org.enissay.sb.cmds.Command;
 import org.enissay.sb.cmds.Easing;
 import org.enissay.sb.cmds.LoopType;
+import org.enissay.sb.utils.OsuUtils;
 
 import javax.vecmath.Vector2d;
 import java.math.BigDecimal;
@@ -10,7 +12,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class SBObject {
+public class SBObject implements Cloneable{
 
     private LinkedList<Command> commands;
     private String name;
@@ -180,6 +182,14 @@ public class SBObject {
 
     public boolean isAnimation() {
         return (!Objects.isNull(frameCount) && !Objects.isNull(frameDelay) && !Objects.isNull(loopType));
+    }
+
+    public double getWidth(Storyboard sb) {
+        return OsuUtils.getImageDim(sb.getPath() + "\\" + getFilePath()) == null ? 0 : OsuUtils.getImageDim(sb.getPath() + "\\" + getFilePath()).getWidth();
+    }
+
+    public double getHeight(Storyboard sb) {
+        return OsuUtils.getImageDim(sb.getPath() + "\\" + getFilePath()) == null ? 0 : OsuUtils.getImageDim(sb.getPath() + "\\" + getFilePath()).getHeight();
     }
 
     private String doubleToString(Double d) {

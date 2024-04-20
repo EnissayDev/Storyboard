@@ -13,17 +13,15 @@ public class Background implements Effect {
     //private long startTime = 5*1000, endTime = 40*1000;
 
     @Override
-    public void render(Storyboard storyboard, long startTime, long endTime, String[] params) {
+    public void render(Storyboard storyboard, long startTime, long endTime, Object... params) {
         //opacity = Double.parseDouble(params[0]);
-        Sprite sp1 = new Sprite("BG", Layer.BACKGROUND, Origin.CENTRE, "sb\\test\\img.png");
+        /*Sprite sp1 = new Sprite("BG", Layer.BACKGROUND, Origin.CENTRE, "sb\\test\\george.png");
         System.out.println("BG: " + storyboard.getPath() + "\\" + sp1.getFilePath());
         var height = OsuUtils.getImageDim(storyboard.getPath() + "\\" + sp1.getFilePath()).getHeight();
         sp1.Scale(startTime, startTime, 480.0f / height, 480.0f / height);
         sp1.Fade(startTime - 500, startTime, 0, opacity);
         sp1.Fade(endTime, endTime + 500, opacity, 0);
 
-        storyboard.addObject(sp1);
+        storyboard.addObject(sp1);*/
     }
-
-
 }

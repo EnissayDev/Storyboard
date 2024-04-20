@@ -60,6 +60,16 @@ public class Animation extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command Move(Easing easing, long startTime, long endTime, double x, double y) {
+        return null;
+    }
+
+    @Override
+    public Command Move(long startTime, long endTime, double x, double y) {
+        return null;
+    }
+
+    @Override
     public Command MoveX(Easing easing, long startTime, long endTime, double startX, double endX) {
         return Move(easing, startTime, endTime, startX, startX, endX, endX);
     }

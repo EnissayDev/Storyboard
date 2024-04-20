@@ -171,15 +171,17 @@ public class Command {
                 double endX = Double.valueOf(params[2]);
                 double endY = Double.valueOf(params[3]);
 
-                if (startX == endX) {
+                if (startX == endX && startY != endY) {
                     //OFFSET 3 IF SUBCOMMAND
                     sb.insert(2 + (subCommand ? 1 : 0), "Y");
                     sb.append(doubleToString(startY) + "," + doubleToString(endY));
                 }
-                else if (startY == endY) {
+                else if (startY == endY && startX != endX) {
                     //OFFSET 3 IF SUBCOMMAND
                     sb.insert(2 + (subCommand ? 1 : 0), "X");
                     sb.append(doubleToString(startX) + "," + doubleToString(endX));
+                }else if (startX == endX && startY == endY) {
+                    sb.append(doubleToString(startX) + "," + doubleToString(startY));
                 } else {
                     List<String> paramStrings = new ArrayList<>();
                     for (String param : params) {

@@ -5,7 +5,10 @@ import org.enissay.osu.BeatmapManager;
 import org.enissay.sb.effects.Effect;
 import org.enissay.sb.obj.Layer;
 import org.enissay.sb.obj.SBObject;
+import org.enissay.sb.text.SBChar;
+import org.enissay.sb.text.SBText;
 
+import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Storyboard{
@@ -75,8 +79,10 @@ public class Storyboard{
     private String path, diffName;
     private Beatmap beatmap;
     private LinkedList<SBObject> objects;
-    private LinkedList<String> texts;
+    //private LinkedList<String> texts;
     private LinkedList<Class<? extends Effect>> effects;
+    //private LinkedList<SBText> texts;
+    private LinkedList<SBChar> chars;
 
     public Storyboard(String path, LinkedList<SBObject> obj, String diffName) {
         this.path = path;
@@ -89,7 +95,8 @@ public class Storyboard{
         this.objects = new LinkedList<>();
         this.beatmap = BeatmapManager.detectBeatmap(path, diffName);
         this.effects = new LinkedList<>();
-        this.texts = new LinkedList<>();
+        //this.texts = new LinkedList<>();
+        this.chars = new LinkedList<>();
         /*JavaClassFinder classFinder = new JavaClassFinder();
         List<Class<? extends Effect>> classes = classFinder.findAllMatchingTypes(Effect.class);
         classes.forEach(clazz -> {
@@ -107,13 +114,46 @@ public class Storyboard{
 
     }
 
-    public LinkedList<String> getTexts() {
+    /*public LinkedList<String> getTexts() {
         return texts;
     }
 
     public void addText(String text) {
         this.texts.add(text);
+    }*/
+
+    public LinkedList<SBChar> getChars() {
+        return chars;
     }
+
+    public void addChar(SBChar sbChar) {
+        if (!chars.contains(sbChar)) chars.add(sbChar);
+    }
+
+    public boolean doesCharacterExist(char character, Color color, Font font) {
+        List<SBChar> chars = getChars();
+        if (chars == null) {
+            return false;
+        }
+        for (SBChar c : chars) {
+            if (c.getCharacter() == character && c.getColor().equals(color) && c.getFont().equals(font)) return true;
+        }
+        return false;
+    }
+
+    public SBChar getExistingChar(char character, Color color, Font font) {
+        for (SBChar c : chars) {
+            if (c.getColor().equals(color) && c.getCharacter() == character && c.getFont().equals(font)) return c;
+        }
+        return null;
+    }
+
+    /*public void addText(SBText text) {
+        this.texts.add(text);
+    }
+    public LinkedList<SBText> getTexts() {
+        return texts;
+    }*/
 
     public String getPath() {
         return path;
@@ -136,7 +176,7 @@ public class Storyboard{
         return this.getObjects().stream().filter(sbObject -> sbObject.getLayer() == layer).collect(Collectors.toList());
     }
 
-    public Storyboard addEffect(Class<? extends Effect> clazz, long startTime, long endTime, String[] params) {
+    public Storyboard addEffect(Class<? extends Effect> clazz, long startTime, long endTime, Object... params) {
         Map<Class<? extends Effect>, Object[]> map = new HashMap<>();
         map.put(clazz, new Object[]{startTime, endTime, params});
         addEffects(map);
@@ -151,7 +191,7 @@ public class Storyboard{
             if (!clazz.getSimpleName().equals("Effect")) {
                 try {
                     if (!this.effects.contains(clazz)) this.effects.add(clazz);
-                    Method renderMethod = clazz.getMethod("render", Storyboard.class, long.class, long.class, String[].class);
+                    Method renderMethod = clazz.getMethod("render", Storyboard.class, long.class, long.class, Object[].class);
                     try {
                         final Object[] values = effects.get(clazz);
                         if (values.length >= 3)

@@ -12,17 +12,17 @@ import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.Random;
 
-public class Particles implements Effect {
+/*public class Particles implements Effect {
 
     private String PATH = "sb\\glow.png";
-    private Vector2 SCALE = new Vector2(.05f, .05f);
+    private Vector2 SCALE = new Vector2(.05f, .05f);//0.05
 
     private Origin ORIGIN = Origin.CENTRE;
     private float ROTATION = 0;
     private Color COLOR = Color.WHITE;
-    private float COLOR_VARIANCE = .2f;
+    private float COLOR_VARIANCE = .02f;
     private boolean ADDITIVE = false;
-    private int PARTICLE_COUNT = 32;
+    private int PARTICLE_COUNT = 32;//32
     private float LIFETIME = 1000*20;
     private Vector2 SPAWN_ORIGIN = new Vector2(Origin.TOP_RIGHT.getX(), Origin.TOP_RIGHT.getY());
     private float SPAWN_SPREAD = 360;
@@ -33,40 +33,7 @@ public class Particles implements Effect {
 
     private Random random = new Random();
 
-    /*// Convert RGB to HSL
-    public static float[] rgbToHsl(int r, int g, int b) {
-        float[] hsl = new float[3];
-        float rNorm = r / 255f;
-        float gNorm = g / 255f;
-        float bNorm = b / 255f;
 
-        float max = Math.max(rNorm, Math.max(gNorm, bNorm));
-        float min = Math.min(rNorm, Math.min(gNorm, bNorm));
-
-        // Calculate the lightness
-        hsl[2] = (max + min) / 2;
-
-        if (max == min) {
-            // Achromatic (grayscale)
-            hsl[0] = 0; // Hue
-            hsl[1] = 0; // Saturation
-        } else {
-            // Calculate the saturation
-            float delta = max - min;
-            hsl[1] = delta / (1 - Math.abs(2 * hsl[2] - 1));
-
-            // Calculate the hue
-            if (max == rNorm) {
-                hsl[0] = 60 * (((gNorm - bNorm) / delta) % 6);
-            } else if (max == gNorm) {
-                hsl[0] = 60 * (((bNorm - rNorm) / delta) + 2);
-            } else if (max == bNorm) {
-                hsl[0] = 60 * (((rNorm - gNorm) / delta) + 4);
-            }
-        }
-
-        return hsl;
-    }*/
 
     @Override
     public void render(Storyboard storyboard, long START_TIME, long END_TIME, String[] params) {
@@ -89,8 +56,6 @@ public class Particles implements Effect {
             long startTime = START_TIME + (i * (int) loopDuration) / PARTICLE_COUNT;
             long endTime = startTime + (int) (loopDuration * loopCount);
 
-            /*if (!isVisible(bitmap, startPosition, endPosition, spriteRotation, loopDuration))
-                continue;*/
 
             Color color = COLOR;
             if (COLOR_VARIANCE > 0) {
@@ -121,8 +86,8 @@ public class Particles implements Effect {
                 particle.Parameter(startTime, endTime, 'A');
 
             Command loop = particle.createLoop(startTime, loopCount);
-            loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()));
-            loop.addSubCommand(particle.Fade(Easing.EASING_IN, (int) (loopDuration * 0.8), (int) loopDuration, color.getAlpha(), 0));
+            //loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()));
+            //loop.addSubCommand(particle.Fade(Easing.EASING_IN, (int) (loopDuration * 0.8), (int) loopDuration, color.getAlpha(), 0));
             loop.addSubCommand(particle.Move(EASING, 0, (int) loopDuration, startPosition.x, startPosition.y, endPosition.x, endPosition.y));
 
             storyboard.addObject(particle);
@@ -154,3 +119,4 @@ public class Particles implements Effect {
         }
     }
 }
+*/

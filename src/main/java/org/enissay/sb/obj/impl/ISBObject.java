@@ -13,6 +13,8 @@ public interface ISBObject {
     Command Fade(long startTime, long endTime, double startOpacity, double endOpacity);
     Command Move(Easing easing, long startTime, long endTime, double startX, double startY, double endX, double endY);
     Command Move(long startTime, long endTime, double startX, double startY, double endX, double endY);
+    Command Move(Easing easing, long startTime, long endTime, double x, double y);
+    Command Move(long startTime, long endTime, double x, double y);
     Command MoveX(Easing easing, long startTime, long endTime, double startX, double endX);
     Command MoveX(long startTime, long endTime, double startX, double endX);
     Command MoveY(Easing easing, long startTime, long endTime, double startY, double endY);
