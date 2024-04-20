@@ -39,11 +39,11 @@ public class InfosBar implements Effect {
 
         double height = OsuUtils.getImageDim(storyboard.getPath() + "\\" + mainBG.getFilePath()).getHeight();
         //mainBG.VectorScale(startTime, endTime, OsuUtils.getImageToSBSize(storyboard.getPath() + "\\" + mainBG.getFilePath()), 0.25,  OsuUtils.getImageToSBSize(storyboard.getPath() + "\\" + mainBG.getFilePath()), 0.25);
-        mainBG.Scale(startTime, endTime, 480.0f / height, 480.0f / height);
+        mainBG.Scale(startTime, endTime, 480.0f / height);
 
         Color glowColor = Color.BLACK;
-        sideglow.VectorScale(startTime, endTime, 1.4, .4, 1.4, .4);
-        sideglow.Color(startTime, endTime, glowColor, glowColor);
+        sideglow.VectorScale(startTime, endTime, 1.4, .4);
+        sideglow.Color(startTime, endTime, glowColor);
         storyboard.addObject(mainBG);
         storyboard.addObject(sideglow);
 
@@ -61,7 +61,7 @@ public class InfosBar implements Effect {
             if (i == bgs)
                 color = new Color(53, 54, 53);
 
-            sp.Color(startTime, startTime, color, color);
+            sp.Color(startTime, color);
             sp.Fade(startTime - 500, startTime, 0, OPACITY);
             sp.Fade(endTime, endTime, OPACITY, 0);
 
@@ -91,8 +91,8 @@ public class InfosBar implements Effect {
 
             Sprite particle = new Sprite("bar", Layer.BACKGROUND, Origin.TOP_LEFT, "sb\\diagbar.png");
 
-            particle.Scale(newStartTime, newStartTime, .369, .369);
-            particle.Color(newStartTime, newStartTime, color, color);
+            particle.Scale(newStartTime, .369);
+            particle.Color(newStartTime, color);
 
             Command loop = particle.createLoop(newStartTime, loopCount);
             //loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()));

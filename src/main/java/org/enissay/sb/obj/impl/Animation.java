@@ -33,10 +33,11 @@ public class Animation extends SBObject implements ISBObject{
     public SBObject getSBObject() {
         return sbObject;
     }*/
-
     @Override
     public Command Fade(Easing easing, long startTime, long endTime, double startOpacity, double endOpacity) {
         Command cmd = new Command(Commands.FADE, easing, startTime, endTime, new String[]{String.valueOf(startOpacity), String.valueOf(endOpacity)});
+        /*setStartTime(startTime);
+        setEndTime(endTime);*/
         this.addCommand(cmd);
         return cmd;
     }
@@ -47,9 +48,43 @@ public class Animation extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command Fade(Easing easing, long time, double startOpacity, double endOpacity) {
+        return Fade(easing, time, time, startOpacity, endOpacity);
+    }
+
+    @Override
+    public Command Fade(long time, double startOpacity, double endOpacity) {
+        return Fade(Easing.LINEAR, time, startOpacity, endOpacity);
+    }
+
+    @Override
+    public Command Fade(Easing easing, long startTime, long endTime, double opacity) {
+        return Fade(easing, startTime, endTime, opacity, opacity);
+    }
+
+    @Override
+    public Command Fade(long startTime, long endTime, double opacity) {
+        return Fade(Easing.LINEAR, startTime, endTime, opacity);
+    }
+
+    @Override
+    public Command Fade(Easing easing, long time, double opacity) {
+        return Fade(easing, time, opacity, opacity);
+    }
+
+    @Override
+    public Command Fade(long time, double opacity) {
+        return Fade(time, opacity);
+    }
+
+    @Override
     public Command Move(Easing easing, long startTime, long endTime, double startX, double startY, double endX, double endY) {
         Command cmd = new Command(Commands.MOVE, easing, startTime, endTime, new String[]{String.valueOf(startX),
                 String.valueOf(startY), String.valueOf(endX), String.valueOf(endY)});
+        setEndX(endX);
+        setEndY(endY);
+        //setX(endX);
+        //setY(endY);
         this.addCommand(cmd);
         return cmd;
     }
@@ -61,17 +96,17 @@ public class Animation extends SBObject implements ISBObject{
 
     @Override
     public Command Move(Easing easing, long startTime, long endTime, double x, double y) {
-        return null;
+        return Move(Easing.LINEAR, startTime, endTime, x, y, x, y);
     }
 
     @Override
     public Command Move(long startTime, long endTime, double x, double y) {
-        return null;
+        return Move(Easing.LINEAR, startTime, endTime, x, y);
     }
 
     @Override
     public Command MoveX(Easing easing, long startTime, long endTime, double startX, double endX) {
-        return Move(easing, startTime, endTime, startX, startX, endX, endX);
+        return Move(easing, startTime, endTime, startX, getY(), endX, getY());
     }
 
     @Override
@@ -81,7 +116,7 @@ public class Animation extends SBObject implements ISBObject{
 
     @Override
     public Command MoveY(Easing easing, long startTime, long endTime, double startY, double endY) {
-        return Move(easing, startTime, endTime, startY, startY, endY, endY);
+        return Move(easing, startTime, endTime, getX(), startY, getX(), endY);
     }
 
     @Override
@@ -103,6 +138,37 @@ public class Animation extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command Scale(Easing easing, long time, double startScale, double endScale) {
+        return Scale(easing, time, time, startScale, endScale);
+
+    }
+
+    @Override
+    public Command Scale(long time, double startScale, double endScale) {
+        return Scale(Easing.LINEAR, time, startScale, endScale);
+    }
+
+    @Override
+    public Command Scale(Easing easing, long startTime, long endTime, double scale) {
+        return Scale(easing, startTime, endTime, scale, scale);
+    }
+
+    @Override
+    public Command Scale(long startTime, long endTime, double scale) {
+        return Scale(Easing.LINEAR, startTime, endTime, scale);
+    }
+
+    @Override
+    public Command Scale(Easing easing, long time, double scale) {
+        return Scale(easing, time, scale, scale);
+    }
+
+    @Override
+    public Command Scale(long time, double scale) {
+        return Scale(Easing.LINEAR, time, scale);
+    }
+
+    @Override
     public Command VectorScale(Easing easing, long startTime, long endTime, double startX, double startY, double endX, double endY) {
         Command cmd = new Command(Commands.VECTOR_SCALE, easing, startTime, endTime, new String[]{String.valueOf(startX),
                 String.valueOf(startY), String.valueOf(endX), String.valueOf(endY)});
@@ -116,6 +182,36 @@ public class Animation extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command VectorScale(Easing easing, long time, double startX, double startY, double endX, double endY) {
+        return VectorScale(easing, time, time, startX, startY, endX, endY);
+    }
+
+    @Override
+    public Command VectorScale(long time, double startX, double startY, double endX, double endY) {
+        return VectorScale(Easing.LINEAR, time, startX, startY, endX, endY);
+    }
+
+    @Override
+    public Command VectorScale(Easing easing, long startTime, long endTime, double x, double y) {
+        return VectorScale(easing, startTime, endTime, x, y, x, y);
+    }
+
+    @Override
+    public Command VectorScale(long startTime, long endTime, double x, double y) {
+        return VectorScale(Easing.LINEAR, startTime, endTime, x, y);
+    }
+
+    @Override
+    public Command VectorScale(Easing easing, long time, double x, double y) {
+        return VectorScale(Easing.LINEAR, time, time, x, y);
+    }
+
+    @Override
+    public Command VectorScale(long time, double x, double y) {
+        return VectorScale(Easing.LINEAR, time, x, y);
+    }
+
+    @Override
     public Command Rotate(Easing easing, long startTime, long endTime, double startRotate, double endRotate) {
         Command cmd = new Command(Commands.ROTATE, easing, startTime, endTime, new String[]{String.valueOf(startRotate),
                 String.valueOf(endRotate)});
@@ -126,6 +222,16 @@ public class Animation extends SBObject implements ISBObject{
     @Override
     public Command Rotate(long startTime, long endTime, double startRotate, double endRotate) {
         return Rotate(Easing.LINEAR, startTime, endTime, startRotate, endRotate);
+    }
+
+    @Override
+    public Command Rotate(Easing easing, long time, double startRotate, double endRotate) {
+        return Rotate(easing, time, time, startRotate, endRotate);
+    }
+
+    @Override
+    public Command Rotate(long time, double startRotate, double endRotate) {
+        return Rotate(Easing.LINEAR, time, startRotate, endRotate);
     }
 
     @Override
@@ -152,6 +258,36 @@ public class Animation extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command Color(Easing easing, long time, Color startRGB, Color endRGB) {
+        return Color(easing, time, time, startRGB, endRGB);
+    }
+
+    @Override
+    public Command Color(long time, Color startRGB, Color endRGB) {
+        return Color(Easing.LINEAR, time, startRGB, endRGB);
+    }
+
+    @Override
+    public Command Color(Easing easing, long startTime, long endTime, Color color) {
+        return Color(easing, startTime, endTime, color, color);
+    }
+
+    @Override
+    public Command Color(long startTime, long endTime, Color color) {
+        return Color(Easing.LINEAR, startTime, endTime, color);
+    }
+
+    @Override
+    public Command Color(Easing easing, long time, Color color) {
+        return Color(easing, time, time, color);
+    }
+
+    @Override
+    public Command Color(long time, Color color) {
+        return Color(Easing.LINEAR, time, color);
+    }
+
+    @Override
     public Command Parameter(Easing easing, long startTime, long endTime, char opt) {
         Command cmd = new Command(Commands.PARAMETER, easing, startTime, endTime, new String[]{String.valueOf(opt)});
         this.addCommand(cmd);
@@ -161,6 +297,16 @@ public class Animation extends SBObject implements ISBObject{
     @Override
     public Command Parameter(long startTime, long endTime, char opt) {
         return Parameter(Easing.LINEAR, startTime, endTime, opt);
+    }
+
+    @Override
+    public Command Parameter(Easing easing, long time, char opt) {
+        return Parameter(easing, time, time, opt);
+    }
+
+    @Override
+    public Command Parameter(long time, char opt) {
+        return Parameter(Easing.LINEAR, time, opt);
     }
 
     @Override
