@@ -14,6 +14,22 @@ for example: `Background`, `ProgressBar` and more to come...
 final Storyboard sb = new Storyboard(beatmapPath, diffName);
 ```
 
+> Beatmap properties:
+
+You can access to [HitObject, TimingPoint](https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29) and BPM etc...
+
+### Beatmap:
+- `path`: Path of the beatmap in the personal machine.
+- `title`: Title of the Beatmap.
+- `diffName`: Name of the difficulty.
+- `artist`: Name of the artist.
+- `mapper`: Name of the mapper.
+- `timingPoints`: Timing Points given in a `LinkedList`.
+
+```java
+sb.getBeatmap();
+```
+
 > Creating a Sprite:
 ```java
 final Sprite sprite = new Sprite(spriteName, layer, origin, filePath);
