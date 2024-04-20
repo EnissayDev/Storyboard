@@ -43,8 +43,12 @@ public interface ISBObject {
     Command VectorScale(long time, double x, double y);
     Command Rotate(Easing easing, long startTime, long endTime, double startRotate, double endRotate);
     Command Rotate(long startTime, long endTime, double startRotate, double endRotate);
+    Command Rotate(Easing easing, long startTime, long endTime, double rotation);
+    Command Rotate(long startTime, long endTime, double rotation);
     Command Rotate(Easing easing, long time, double startRotate, double endRotate);
     Command Rotate(long time, double startRotate, double endRotate);
+    Command Rotate(Easing easing, long time, double rotation);
+    Command Rotate(long time, double rotation);
     Command Color(Easing easing, long startTime, long endTime, int startR, int startG, int startB, int endR, int endG, int endB);
     Command Color(long startTime, long endTime, int startR, int startG, int startB, int endR, int endG, int endB);
     Command Color(Easing easing, long startTime, long endTime, Color startRGB, Color endRGB);

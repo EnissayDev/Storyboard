@@ -10,6 +10,7 @@ import org.enissay.sb.text.filters.GlitchFilter;
 import org.enissay.sb.text.filters.ZoomFilter;
 import org.enissay.sb.utils.OsuUtils;
 import org.enissay.testsb.effects.InfosBar;
+import org.enissay.testsb.effects.Particles;
 import org.enissay.testsb.effects.ProgressBar;
 
 import java.awt.*;
@@ -31,6 +32,7 @@ public class Main {
         //Create storyboard with path directory
 
         Storyboard sb = new Storyboard("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638490582521645685-audio", "Insane")
+                .addEffect(Particles.class, MAP_START, MAP_END, null)
                 .addEffect(InfosBar.class, MAP_START, MAP_END, null);
 
         var barHeight = OsuUtils.getImageDim(sb.getPath() + "\\sb\\bar2.png").getHeight() * .3;

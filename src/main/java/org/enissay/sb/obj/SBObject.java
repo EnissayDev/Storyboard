@@ -205,7 +205,7 @@ public class SBObject implements Cloneable{
         return null;//getPosition2At(time, easing, getStartTime(), getEndTime(), new Vector2d(getEndX(), getEndY()));
     }
 
-    public Vector2d getPosition2At(final Command command, final long time, final Easing easing, long startTime, long endTime, final Vector2d destination) {
+    public Vector2d getPositionAt(final Command command, final long time, final Easing easing, long startTime, long endTime, final Vector2d destination) {
         if (command != null && command.getParent() != null) {
             AtomicLong end = new AtomicLong(0);
             command.getParent().getSubCommands().forEach(subCommand -> {

@@ -225,6 +225,16 @@ public class Animation extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command Rotate(Easing easing, long startTime, long endTime, double rotation) {
+        return Rotate(easing, startTime, endTime, rotation, rotation);
+    }
+
+    @Override
+    public Command Rotate(long startTime, long endTime, double rotation) {
+        return Rotate(Easing.LINEAR, startTime, endTime, rotation);
+    }
+
+    @Override
     public Command Rotate(Easing easing, long time, double startRotate, double endRotate) {
         return Rotate(easing, time, time, startRotate, endRotate);
     }
@@ -234,6 +244,15 @@ public class Animation extends SBObject implements ISBObject{
         return Rotate(Easing.LINEAR, time, startRotate, endRotate);
     }
 
+    @Override
+    public Command Rotate(Easing easing, long time, double rotation) {
+        return Rotate(easing, time, rotation, rotation);
+    }
+
+    @Override
+    public Command Rotate(long time, double rotation) {
+        return Rotate(Easing.LINEAR, time, rotation);
+    }
     @Override
     public Command Color(Easing easing, long startTime, long endTime, int startR, int startG, int startB, int endR, int endG, int endB) {
         Command cmd = new Command(Commands.COLOR, easing, startTime, endTime, new String[]{String.valueOf(startR),

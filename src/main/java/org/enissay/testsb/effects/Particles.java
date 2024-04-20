@@ -12,7 +12,7 @@ import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.Random;
 
-/*public class Particles implements Effect {
+public class Particles implements Effect {
 
     private String PATH = "sb\\glow.png";
     private Vector2 SCALE = new Vector2(.05f, .05f);//0.05
@@ -33,10 +33,8 @@ import java.util.Random;
 
     private Random random = new Random();
 
-
-
     @Override
-    public void render(Storyboard storyboard, long START_TIME, long END_TIME, String[] params) {
+    public void render(Storyboard storyboard, long START_TIME, long END_TIME, Object... params) {
         long duration = END_TIME - START_TIME;
         int loopCount = Math.max(1, (int) Math.floor(duration / LIFETIME));
 
@@ -73,21 +71,21 @@ import java.util.Random;
 
             Sprite particle = new Sprite("particle", Layer.FOREGROUND, ORIGIN, PATH);
             if (spriteRotation != 0)
-                particle.Rotate(startTime, startTime, spriteRotation, spriteRotation);
+                particle.Rotate(startTime, spriteRotation);
             if (!color.equals(Color.WHITE))
-                particle.Color(startTime, startTime, color, color);
+                particle.Color(startTime, color);
             if (!SCALE.equals(new Vector2(1, 1))) {
                 if (SCALE.x != SCALE.y)
-                    particle.VectorScale(startTime, startTime, SCALE.x, SCALE.y, SCALE.x, SCALE.y);
+                    particle.VectorScale(startTime, SCALE.x, SCALE.y);
                 else
-                    particle.Scale(startTime, startTime, SCALE.x, SCALE.x);
+                    particle.Scale(startTime, SCALE.x);
             }
             if (ADDITIVE)
                 particle.Parameter(startTime, endTime, 'A');
 
             Command loop = particle.createLoop(startTime, loopCount);
-            //loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()));
-            //loop.addSubCommand(particle.Fade(Easing.EASING_IN, (int) (loopDuration * 0.8), (int) loopDuration, color.getAlpha(), 0));
+            loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()));
+            loop.addSubCommand(particle.Fade(Easing.EASING_IN, (int) (loopDuration * 0.8), (int) loopDuration, color.getAlpha(), 0));
             loop.addSubCommand(particle.Move(EASING, 0, (int) loopDuration, startPosition.x, startPosition.y, endPosition.x, endPosition.y));
 
             storyboard.addObject(particle);
@@ -119,4 +117,3 @@ import java.util.Random;
         }
     }
 }
-*/

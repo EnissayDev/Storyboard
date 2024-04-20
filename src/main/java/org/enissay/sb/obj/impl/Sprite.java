@@ -327,6 +327,16 @@ public class Sprite extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command Rotate(Easing easing, long startTime, long endTime, double rotation) {
+        return Rotate(easing, startTime, endTime, rotation, rotation);
+    }
+
+    @Override
+    public Command Rotate(long startTime, long endTime, double rotation) {
+        return Rotate(Easing.LINEAR, startTime, endTime, rotation);
+    }
+
+    @Override
     public Command Rotate(Easing easing, long time, double startRotate, double endRotate) {
         return Rotate(easing, time, time, startRotate, endRotate);
     }
@@ -334,6 +344,16 @@ public class Sprite extends SBObject implements ISBObject{
     @Override
     public Command Rotate(long time, double startRotate, double endRotate) {
         return Rotate(Easing.LINEAR, time, startRotate, endRotate);
+    }
+
+    @Override
+    public Command Rotate(Easing easing, long time, double rotation) {
+        return Rotate(easing, time, rotation, rotation);
+    }
+
+    @Override
+    public Command Rotate(long time, double rotation) {
+        return Rotate(Easing.LINEAR, time, rotation);
     }
 
     @Override
