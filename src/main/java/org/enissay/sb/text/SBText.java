@@ -21,8 +21,9 @@ public class SBText {
     //private Sprite mainSprite;
     private Color color;
     private LinkedList<SBChar> chars;
+    private boolean vertical = false;
 
-    public SBText(String name, Storyboard sb, String text, Font font, long startTime, long endTime, double x, double y, Color color) {
+    public SBText(String name, Storyboard sb, String text, Font font, long startTime, long endTime, double x, double y, Color color, boolean vertical) {
         this.name = name;
         this.storyboard = sb;
         this.text = text;
@@ -33,7 +34,8 @@ public class SBText {
         this.y = y;
         this.color = color;
         this.chars = new LinkedList<>();
-        sb.addEffect(TextGenerator.class, startTime, endTime, this);
+        this.vertical = vertical;
+        sb.addEffect(TextGenerator.class, startTime, endTime, this, vertical);
         /*sb.addEffect(TextGenerator.class, startTime, endTime, new String[]{font , String.valueOf(size), text,
                 String.valueOf(Origin.TOP_CENTRE.getX()), String.valueOf(Origin.TOP_CENTRE.getY()), "true"});*/
         //this.mainSprite = new Sprite(name + "-" + (sb.getTexts().size() + 1), Layer.FOREGROUND, Origin.CENTRE, "sb\\font\\" + name + "-" + (sb.getTexts().size() + 1) + ".png", x, y);
@@ -63,6 +65,24 @@ public class SBText {
         sb.addText(this);*/
         /*ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("customFont").getFile() + "\\" + font + ".otf");*/
+    }
+
+    public SBText(String name, Storyboard sb, String text, Font font, long startTime, long endTime, double x, double y, Color color) {
+        this.name = name;
+        this.storyboard = sb;
+        this.text = text;
+        this.font = font;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.chars = new LinkedList<>();
+        sb.addEffect(TextGenerator.class, startTime, endTime, this);
+    }
+
+    public boolean isVertical() {
+        return vertical;
     }
 
     public LinkedList<SBChar> getChars() {

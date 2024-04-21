@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 public class InfosBar implements Effect {
 
@@ -30,22 +31,54 @@ public class InfosBar implements Effect {
 
     @Override
     public void render(Storyboard storyboard, long startTime, long endTime, Object... params) {
+        Random random = new Random();
         var width = OsuUtils.getImageDim(storyboard.getPath() + "\\sb\\bar.jpg").getWidth() * SCALE;
-        //var height = OsuUtils.getImageDim(storyboard.getPath() + "\\sb\\bar.jpg").getWidth() * scale;
         var editorWidth = Constants.EDITOR_X * SCALE;
 
         Sprite sideglow = new Sprite("BG3", Layer.BACKGROUND, Origin.CENTRE, "sb\\sideglow.png", Origin.CENTRE.getX(), Origin.CENTRE.getY() - 70);
         Sprite mainBG = new Sprite("mainBG", Layer.BACKGROUND, Origin.CENTRE, "sb\\mainbg.jpg", Origin.CENTRE.getX(), Origin.CENTRE.getY() + 70);
 
-        double height = OsuUtils.getImageDim(storyboard.getPath() + "\\" + mainBG.getFilePath()).getHeight();
+        double bgWidth = OsuUtils.getImageDim(storyboard.getPath() + "\\" + mainBG.getFilePath()).getWidth();
+        double bgHeight = OsuUtils.getImageDim(storyboard.getPath() + "\\" + mainBG.getFilePath()).getHeight();
         //mainBG.VectorScale(startTime, endTime, OsuUtils.getImageToSBSize(storyboard.getPath() + "\\" + mainBG.getFilePath()), 0.25,  OsuUtils.getImageToSBSize(storyboard.getPath() + "\\" + mainBG.getFilePath()), 0.25);
-        mainBG.Scale(startTime, endTime, 480.0f / height);
+        //mainBG.Scale(startTime, endTime, 480.0f / bgHeight);
+        mainBG.Scale(startTime, (854.0 / bgWidth) * 1.1);
+        mainBG.Fade(startTime, 1);
+        mainBG.Fade(endTime, 0);
+
+        Vector2 startPos = new Vector2(320, 240);//CENTRE
+        double startAngle = 0d;
+        int exponent = 0;
+        long starttime = startTime;
+
+        while (true) {
+            double angle = random.nextDouble(0, 2 * Math.PI);
+            Vector2 radius = new Vector2(random.nextFloat(-20f, 20f), random.nextFloat(-20f, 20f));
+            Vector2 endPosition = new Vector2(
+                    (320f + (float)(radius.x * Math.cos(angle))),
+                    (240f + + (float)(radius.y * Math.sin(angle)))
+            );
+
+            double endAngle = startAngle + random.nextDouble(-Math.PI / 120, Math.PI / 120);
+            long endtime = starttime + (60000 / 120) * 4;
+
+            mainBG.Move(Easing.SINE_IN_OUT, starttime, endtime, startPos.x, startPos.y, endPosition.x, endPosition.y);
+            mainBG.Rotate(Easing.SINE_IN_OUT, starttime, endtime, startAngle, endAngle);
+
+            if (endtime >= endTime)
+                break;
+
+            startPos = endPosition;
+            startAngle = endAngle;
+            endAngle += random.nextDouble(0, Math.PI / 120) * Math.pow(-1, ++exponent);
+            starttime = endtime;
+        }
 
         Color glowColor = Color.BLACK;
         sideglow.VectorScale(startTime, endTime, 1.4, .4);
         sideglow.Color(startTime, endTime, glowColor);
-        storyboard.addObject(mainBG);
         storyboard.addObject(sideglow);
+        storyboard.addObject(mainBG);
 
         int bgs = (int) Math.ceil(editorWidth/width) + 1;//(scale < .4 ? 1 : 0);
 

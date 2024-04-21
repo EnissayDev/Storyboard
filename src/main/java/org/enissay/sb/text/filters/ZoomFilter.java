@@ -1,5 +1,6 @@
 package org.enissay.sb.text.filters;
 
+import org.enissay.sb.cmds.Easing;
 import org.enissay.sb.obj.impl.Sprite;
 import org.enissay.sb.text.FontUtils;
 import org.enissay.sb.text.SBChar;
@@ -12,34 +13,65 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ZoomFilter implements TextFilter {
 
     private double SCALE;
+    private double SPACING = 0;
+    private Easing EASING;
 
-    public ZoomFilter(double scale) {
+    public ZoomFilter(Easing easing, double scale, double spacing) {
+        this.EASING = easing;
+        this.SCALE = scale;
+        this.SPACING = spacing;
+    }
+
+    public ZoomFilter(Easing easing, double scale) {
+        this.EASING = easing;
         this.SCALE = scale;
     }
 
     @Override
     public void apply(SBText sbText) {
         double totalWidth = calculateTotalWidth(sbText);
+        final boolean vertical = sbText.isVertical();
         final double x = sbText.getX();
+        final double y = sbText.getY();
+
         String text = sbText.getText();
-
-        double startX = x - totalWidth / 2;
-
         double spacing = (totalWidth - calculateTotalWidthWithoutSpacing(sbText)) / (text.length() - 1);
 
-        for (int i = 0; i < text.length(); i++) {
-            final char character = text.charAt(i);
-            final SBChar sbChar = sbText.getChars().get(i);
-            final Sprite sprite = sbChar.getSprite();
+        //SCALE TIME
+        if (!vertical) {
+            double startX = x - totalWidth / 2;
 
-            double charWidth = FontUtils.getCharWidth(text, character, sbText.getFont()) * SCALE;
+            for (int i = 0; i < text.length(); i++) {
+                final char character = text.charAt(i);
+                final SBChar sbChar = sbText.getChars().get(i);
+                final Sprite sprite = sbChar.getSprite();
 
-            double newX = startX + charWidth / 2;
+                double charWidth = FontUtils.getCharWidth(text, character, sbText.getFont()) * SCALE;
 
-            sprite.MoveX(sbText.getStartTime(), sbText.getEndTime(), sprite.getX(), newX);
-            sprite.Scale(sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
+                double newX = startX + charWidth / 2;
 
-            startX += charWidth + spacing;
+                sprite.MoveX(EASING, sbText.getStartTime(), sbText.getEndTime(), sprite.getX(), newX);
+                sprite.Scale(EASING, sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
+
+                startX += charWidth + spacing;
+            }
+        }else {
+            double startY = y - totalWidth / 2;
+
+            for (int i = 0; i < text.length(); i++) {
+                final char character = text.charAt(i);
+                final SBChar sbChar = sbText.getChars().get(i);
+                final Sprite sprite = sbChar.getSprite();
+
+                double charWidth = FontUtils.getCharWidth(text, character, sbText.getFont()) * SCALE;
+
+                double newY = startY + charWidth / 2;
+
+                sprite.MoveY(EASING, sbText.getStartTime(), sbText.getEndTime(), sprite.getY(), newY);
+                sprite.Scale(EASING, sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
+
+                startY += charWidth + spacing;
+            }
         }
     }
 
@@ -81,7 +113,7 @@ public class ZoomFilter implements TextFilter {
             totalWidth += sbChar.getSprite().getWidth(text.getStoryboard()) * SCALE;
         }
         // Add the spacing between characters (except for the last one)
-        //totalWidth += (text.getChars().size() - 1) * SPACING*SCALE;
+        totalWidth += (text.getChars().size() - 1) * SPACING * SCALE;
         return totalWidth;
     }
 

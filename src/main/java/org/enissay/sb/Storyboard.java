@@ -130,20 +130,20 @@ public class Storyboard{
         if (!chars.contains(sbChar)) chars.add(sbChar);
     }
 
-    public boolean doesCharacterExist(char character, Color color, Font font) {
+    public boolean doesCharacterExist(char character, /*Color color,*/ Font font) {
         List<SBChar> chars = getChars();
         if (chars == null) {
             return false;
         }
         for (SBChar c : chars) {
-            if (c.getCharacter() == character && c.getColor().equals(color) && c.getFont().equals(font)) return true;
+            if (c.getCharacter() == character && /*c.getColor().equals(color) &&*/ c.getFont().equals(font)) return true;
         }
         return false;
     }
 
-    public SBChar getExistingChar(char character, Color color, Font font) {
+    public SBChar getExistingChar(char character, /*Color color,*/ Font font) {
         for (SBChar c : chars) {
-            if (c.getColor().equals(color) && c.getCharacter() == character && c.getFont().equals(font)) return c;
+            if (/*c.getColor().equals(color) && */c.getCharacter() == character && c.getFont().equals(font)) return c;
         }
         return null;
     }

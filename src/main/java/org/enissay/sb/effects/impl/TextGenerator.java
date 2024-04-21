@@ -25,6 +25,9 @@ public class TextGenerator implements Effect {
     @Override
     public void render(Storyboard sb, long startTime, long endTime, Object... params) {
         final SBText sbText = (SBText) params[0];
+        boolean vertical = false;
+        if (params.length > 1)
+            vertical = (boolean) params[1];
         final String text = sbText.getText();
         final double x = sbText.getX();
         final double y = sbText.getY();
@@ -54,35 +57,69 @@ public class TextGenerator implements Effect {
             double charWidth = FontUtils.getCharWidth(text, character, font);
             totalWidth += charWidth;
         }
-        double startX = x - totalWidth / 2;
 
-        for (int i = 0; i < text.length(); i++) {
-            final char character = text.charAt(i);
-            double charWidth = FontUtils.getCharWidth(text, character, font);
+        if (!vertical) {
+            double startX = x - totalWidth / 2;
 
-            double newX = startX + charWidth / 2;
+            for (int i = 0; i < text.length(); i++) {
+                final char character = text.charAt(i);
+                double charWidth = FontUtils.getCharWidth(text, character, font);
 
-            startX += charWidth;
+                double newX = startX + charWidth / 2;
 
-            //double newX = x - (text.length() * (font.getSize() + spacingFactor * font.getSize())) / 2 + (font.getSize() + spacingFactor * font.getSize()) * i;
-            System.out.println("character: " + character + " charWidth: " + charWidth + " font: " + font.getName() + " fontSize: " + font.getSize() + " newX: " + newX);
-            if (!sb.doesCharacterExist(character, color, font)) {
-                final SBChar sbChar = new SBChar(sb, character, font, color, newX, y);
-                if (character != ' ') {
-                    FontUtils.convert(sb, String.valueOf(character), sbChar.getSprite().getName(), font, color == null ? Color.WHITE : color, null);
+                startX += charWidth;
+
+                //double newX = x - (text.length() * (font.getSize() + spacingFactor * font.getSize())) / 2 + (font.getSize() + spacingFactor * font.getSize()) * i;
+                System.out.println("character: " + character + " charWidth: " + charWidth + " font: " + font.getName() + " fontSize: " + font.getSize() + " newX: " + newX);
+                if (!sb.doesCharacterExist(character/*, color*/, font)) {
+                    final SBChar sbChar = new SBChar(sb, character, font, color, newX, y);
+                    if (character != ' ') {
+                        FontUtils.convert(sb, String.valueOf(character), sbChar.getSprite().getName(), font, Color.WHITE/*color == null ? Color.WHITE : color*/, null);
+                    }
+                    sbChar.getSprite().Color(startTime, color);
+                    sb.addChar(sbChar);
+                    sbText.getChars().add(sbChar);
+                    //sb.addEffect(TextGenerator.class, startTime, endTime, font, String.valueOf(character), sbChar.getSprite(), color);
+                    System.out.println("[FONT] Added character " + character + "! " + color.getRed() + " " + color.getGreen() + " " + color.getBlue());
+                } else {
+                    final SBChar sbChar = sb.getExistingChar(character/*, color*/, font);
+                    if (sbChar != null) {
+                        final SBChar charCopy = new SBChar(sb, sbChar.getSprite().getFilePath(), sbChar.getCharacter(), sbChar.getFont(), /*color*/color, newX, y);
+                        System.out.println("[FONT] Found existing character with same color " + character);
+                        charCopy.getSprite().Color(startTime, color);
+                        sbText.getChars().add(charCopy);
+                        //sb.addEffect(TextGenerator.class, startTime, endTime, charCopy.getFont(), String.valueOf(character), charCopy.getSprite(), charCopy.getColor());
+                    } else System.out.println("[FONT] Couldn't find character " + character + "!");
                 }
-                sb.addChar(sbChar);
-                sbText.getChars().add(sbChar);
-                //sb.addEffect(TextGenerator.class, startTime, endTime, font, String.valueOf(character), sbChar.getSprite(), color);
-                System.out.println("[FONT] Added character " + character + "! " + color.getRed() + " " + color.getGreen() + " " + color.getBlue());
-            } else {
-                final SBChar sbChar = sb.getExistingChar(character, color, font);
-                if (sbChar != null) {
-                    final SBChar charCopy = new SBChar(sb, sbChar.getSprite().getFilePath(), sbChar.getCharacter(), sbChar.getFont(), sbChar.getColor(), newX, y);
-                    System.out.println("[FONT] Found existing character with same color " + character);
-                    sbText.getChars().add(charCopy);
-                    //sb.addEffect(TextGenerator.class, startTime, endTime, charCopy.getFont(), String.valueOf(character), charCopy.getSprite(), charCopy.getColor());
-                } else System.out.println("[FONT] Couldn't find character " + character + "!");
+            }
+        }else {
+            double startY = y - totalWidth / 2;
+
+            for (int i = 0; i < text.length(); i++) {
+                final char character = text.charAt(i);
+                double charWidth = FontUtils.getCharWidth(text, character, font);
+
+                double newY = startY + charWidth / 2;
+
+                startY += charWidth;
+
+                if (!sb.doesCharacterExist(character/*, color*/, font)) {
+                    final SBChar sbChar = new SBChar(sb, character, font, color, x, newY);
+                    if (character != ' ') {
+                        FontUtils.convert(sb, String.valueOf(character), sbChar.getSprite().getName(), font, color == null ? Color.WHITE : color, null);
+                    }
+                    sb.addChar(sbChar);
+                    sbText.getChars().add(sbChar);
+                    //System.out.println("[FONT] Added character " + character + "! " + color.getRed() + " " + color.getGreen() + " " + color.getBlue());
+                } else {
+                    final SBChar sbChar = sb.getExistingChar(character/*, color*/, font);
+                    if (sbChar != null) {
+                        final SBChar charCopy = new SBChar(sb, sbChar.getSprite().getFilePath(), sbChar.getCharacter(), sbChar.getFont(), color, x, newY);
+                        //System.out.println("[FONT] Found existing character with same color " + character);
+                        charCopy.getSprite().Color(startTime, color);
+                        sbText.getChars().add(charCopy);
+                    } //else System.out.println("[FONT] Couldn't find character " + character + "!");
+                }
             }
         }
 

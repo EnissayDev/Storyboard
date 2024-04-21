@@ -23,11 +23,12 @@ public class GlitchFilter implements TextFilter {
         final double ogY = sbText.getY();//240
         final Font font = sbText.getFont();
         final Storyboard storyboard = sbText.getStoryboard();
+        final boolean vertical = sbText.isVertical();
 
         /*final Sprite spriteRed = new Sprite("t-" + storyboard.getTexts().size() + "-red", Layer.OVERLAY, Origin.TOP_CENTRE,
                 redPath, x, y);*/
-        final SBText blue = new SBText("glitchRed", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(22, 126, 140, 255));//T-3
-        final SBText red = new SBText("glitchBlue", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(169, 42, 21, 255));//T-2
+        final SBText blue = new SBText("glitchRed", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(22, 126, 140, 255), vertical);//T-3
+        final SBText red = new SBText("glitchBlue", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(169, 42, 21, 255), vertical);//T-2
 
         final Easing easingStyle = Easing.BACK_IN_OUT;
 

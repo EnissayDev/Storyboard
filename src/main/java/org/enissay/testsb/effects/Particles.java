@@ -14,15 +14,15 @@ import java.util.Random;
 
 public class Particles implements Effect {
 
-    private String PATH = "sb\\glow.png";
-    private Vector2 SCALE = new Vector2(.05f, .05f);//0.05
+    private String PATH = "sb\\particle.png";
+    private Vector2 SCALE = new Vector2(.1f, .1f);//0.05
 
     private Origin ORIGIN = Origin.CENTRE;
     private float ROTATION = 0;
     private Color COLOR = Color.WHITE;
-    private float COLOR_VARIANCE = .02f;
+    private float COLOR_VARIANCE = 0.1f;
     private boolean ADDITIVE = false;
-    private int PARTICLE_COUNT = 32;//32
+    private int PARTICLE_COUNT = 50;//32
     private float LIFETIME = 1000*20;
     private Vector2 SPAWN_ORIGIN = new Vector2(Origin.TOP_RIGHT.getX(), Origin.TOP_RIGHT.getY());
     private float SPAWN_SPREAD = 360;
@@ -53,7 +53,6 @@ public class Particles implements Effect {
             float loopDuration = duration / loopCount;
             long startTime = START_TIME + (i * (int) loopDuration) / PARTICLE_COUNT;
             long endTime = startTime + (int) (loopDuration * loopCount);
-
 
             Color color = COLOR;
             if (COLOR_VARIANCE > 0) {

@@ -176,7 +176,7 @@ public class Sprite extends SBObject implements ISBObject{
 
     @Override
     public Command Fade(long time, double opacity) {
-        return Fade(time, opacity);
+        return Fade(time, opacity, opacity);
     }
 
     @Override
@@ -217,6 +217,36 @@ public class Sprite extends SBObject implements ISBObject{
     }
 
     @Override
+    public Command MoveX(Easing easing, long time, double startX, double endX) {
+        return MoveX(easing, time, time, startX, endX);
+    }
+
+    @Override
+    public Command MoveX(long time, double startX, double endX) {
+        return MoveX(Easing.LINEAR, time, startX, endX);
+    }
+
+    @Override
+    public Command MoveX(Easing easing, long startTime, long endTime, double x) {
+        return MoveX(easing, startTime, endTime, x, x);
+    }
+
+    @Override
+    public Command MoveX(long startTime, long endTime, double x) {
+        return MoveX(Easing.LINEAR, startTime, endTime, x);
+    }
+
+    @Override
+    public Command MoveX(Easing easing, long time, double x) {
+        return MoveX(easing, time, x, x);
+    }
+
+    @Override
+    public Command MoveX(long time, double x) {
+        return MoveX(Easing.LINEAR, time, x);
+    }
+
+    @Override
     public Command MoveY(Easing easing, long startTime, long endTime, double startY, double endY) {
         return Move(easing, startTime, endTime, getX(), startY, getX(), endY);
     }
@@ -224,6 +254,36 @@ public class Sprite extends SBObject implements ISBObject{
     @Override
     public Command MoveY(long startTime, long endTime, double startY, double endY) {
         return MoveY(Easing.LINEAR, startTime, endTime, startY, endY);
+    }
+
+    @Override
+    public Command MoveY(Easing easing, long time, double startY, double endY) {
+        return MoveY(easing, time, time, startY, endY);
+    }
+
+    @Override
+    public Command MoveY(long time, double startY, double endY) {
+        return MoveY(Easing.LINEAR, time, startY, endY);
+    }
+
+    @Override
+    public Command MoveY(Easing easing, long startTime, long endTime, double y) {
+        return MoveY(easing, startTime, endTime, y, y);
+    }
+
+    @Override
+    public Command MoveY(long time, long startTime, long endTime, double y) {
+        return MoveY(Easing.LINEAR, time, startTime, endTime, y);
+    }
+
+    @Override
+    public Command MoveY(Easing easing, long time, double y) {
+        return MoveY(easing, time, y, y);
+    }
+
+    @Override
+    public Command MoveY(long time, double y) {
+        return MoveY(Easing.LINEAR, time, y);
     }
 
     @Override

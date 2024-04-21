@@ -2,21 +2,23 @@ package org.enissay.testsb;
 
 import org.enissay.osu.data.TimingPoint;
 import org.enissay.sb.*;
+import org.enissay.sb.cmds.Easing;
 import org.enissay.sb.obj.Origin;
 import org.enissay.sb.text.FontUtils;
 import org.enissay.sb.text.SBText;
-import org.enissay.sb.effects.impl.TextGenerator;
 import org.enissay.sb.text.filters.GlitchFilter;
-import org.enissay.sb.text.filters.ZoomFilter;
+import org.enissay.sb.text.filters.ShakeFilter;
 import org.enissay.sb.utils.OsuUtils;
-import org.enissay.testsb.effects.InfosBar;
-import org.enissay.testsb.effects.Particles;
-import org.enissay.testsb.effects.ProgressBar;
+import org.enissay.testsb.effects.*;
+import org.quifft.QuiFFT;
+import org.quifft.output.FFTFrame;
+import org.quifft.output.FFTStream;
 
+import javax.sound.sampled.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
 
@@ -29,11 +31,11 @@ public class Main {
     private static long MAP_START = -1000;
 
     public static void main(String[] args) {
-        //Create storyboard with path directory
-
         Storyboard sb = new Storyboard("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638490582521645685-audio", "Insane")
-                .addEffect(Particles.class, MAP_START, MAP_END, null)
-                .addEffect(InfosBar.class, MAP_START, MAP_END, null);
+                .addEffect(InfosBar.class, MAP_START, MAP_END, null)
+                .addEffect(Particles.class, MAP_START, MAP_END, null);
+                //.addEffect(TestEffect.class, MAP_START, 10000, null);
+                //.addEffect(Spectrum.class, MAP_START, MAP_END, null);
 
         var barHeight = OsuUtils.getImageDim(sb.getPath() + "\\sb\\bar2.png").getHeight() * .3;
         sb.addEffect(ProgressBar.class, MAP_START, MAP_END, (double)Constants.EDITOR_X - 20, barHeight*7, 1.55d);
@@ -94,9 +96,11 @@ public class Main {
             String sectionName = sectionNames[i % sectionNames.length];
 
             SBText sbText = new SBText("section-" + i, sb, sectionName, FontUtils.getCustomFont("phonk", 20), sections[i], sections[i + 1],
-                    Origin.CENTRE.getX()/6, Origin.CENTRE.getY(), Color.WHITE)
+                    Origin.CENTRE.getX()/6, Origin.CENTRE.getY(), Color.WHITE, false)
                     .addFilter(new GlitchFilter())
-                    .addFilter(new ZoomFilter(1.25));
+                    .addFilter(new ShakeFilter(7, 5, 10));
+                    //.addFilter(new ZoomFilter(Easing.LINEAR, 1.25f));
+
             sbText.apply();
         }
 
@@ -160,7 +164,69 @@ public class Main {
                 convert(Character.toString(c), Character.toString(c));
             }
         }*/
+
+        /*visualizeSpectrum(input);
+
+        try {
+            FFTResult fft = new QuiFFT(input).fullFFT();
+            System.out.println(fft.fileDurationMs);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException(e);
+        }*/
+
     }
+
+    /*// FFTStream used to compute FFT frames
+    private static FFTStream fftStream;
+
+    // Next frame to graph
+    private static FFTFrame nextFrame;
+
+    private static void visualizeSpectrum(File input) {
+        // Obtain FFTStream for song from QuiFFT
+        QuiFFT quiFFT = null;
+        try {
+            quiFFT = new QuiFFT(input);
+        } catch (IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+        fftStream = quiFFT.fftStream();
+
+        //fftStream.frequencyResolution -> context.GetFftFrequency(path)
+        System.out.println(fftStream);
+
+        // Compute first frame
+        nextFrame = fftStream.next();
+
+        // Calculate time between consecutive FFT frames
+        double msBetweenFFTs = fftStream.windowDurationMs * (1 - fftStream.fftParameters.windowOverlap);
+        long nanoTimeBetweenFFTs = Math.round(msBetweenFFTs * Math.pow(10, 6));
+
+        // Begin visualization cycle
+        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(Main::graphThenComputeNextFrame, 0, nanoTimeBetweenFFTs, TimeUnit.NANOSECONDS);
+    }
+
+    private static void graphThenComputeNextFrame() {
+        // Graph currently stored frame
+        FrequencyBin[] bins = nextFrame.bins;
+        long timestamp = (long) nextFrame.frameStartMs / 1000;
+        //grapher.updateFFTData(bins, timestamp);
+        for (int i = 0; i < bins.length; i++) {
+            System.out.println("time: " + timestamp + " f: " + bins[i].frequency);
+        }
+
+        // If next frame exists, compute it
+        if(fftStream.hasNext()) {
+            nextFrame = fftStream.next();
+        } else { // otherwise song has ended, so end program
+            System.exit(0);
+        }
+    }*/
+
 
     public static Color interpolateColors(Color color1, Color color2, double ratio) {
         if (ratio > 1) ratio = 1;
