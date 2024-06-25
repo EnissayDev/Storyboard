@@ -170,8 +170,8 @@ public class Animation extends SBObject implements ISBObject{
     }
 
     @Override
-    public Command MoveY(long time, long startTime, long endTime, double y) {
-        return MoveY(Easing.LINEAR, time, startTime, endTime, y);
+    public Command MoveY(long startTime, long endTime, double y) {
+        return MoveY(Easing.LINEAR, startTime, endTime, y);
     }
 
     @Override

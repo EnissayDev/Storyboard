@@ -19,12 +19,23 @@
             <artifactId>vecmath</artifactId>
             <version>1.5.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.1.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guicedee.services</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.0.14.1-jre8</version>
+        </dependency>
+        <!-- Thanks for using https://jar-download.com -->
+
         <dependency>
             <groupId>org.quifft</groupId>
             <artifactId>quifft</artifactId>
             <version>0.1.1</version>
         </dependency>
-
     </dependencies>
-
 </project>

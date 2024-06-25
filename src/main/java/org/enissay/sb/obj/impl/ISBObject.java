@@ -34,7 +34,7 @@ public interface ISBObject {
     Command MoveY(Easing easing, long time, double startY, double endY);
     Command MoveY(long time, double startY, double endY);
     Command MoveY(Easing easing, long startTime, long endTime, double y);
-    Command MoveY(long time, long startTime, long endTime, double y);
+    Command MoveY(long startTime, long endTime, double y);
     Command MoveY(Easing easing, long time, double y);
     Command MoveY(long time, double y);
     Command Scale(Easing easing, long startTime, long endTime, double startScale, double endScale);

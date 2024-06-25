@@ -1,4 +1,4 @@
-package org.enissay.testsb.effects;
+package org.enissay.sb.effects.impl;
 
 import org.enissay.sb.Constants;
 import org.enissay.sb.Storyboard;

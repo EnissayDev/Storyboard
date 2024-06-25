@@ -31,6 +31,7 @@ public class ZoomFilter implements TextFilter {
     public void apply(SBText sbText) {
         double totalWidth = calculateTotalWidth(sbText);
         final boolean vertical = sbText.isVertical();
+        final boolean seperated = sbText.isSeperatedChars();
         final double x = sbText.getX();
         final double y = sbText.getY();
 
@@ -38,40 +39,45 @@ public class ZoomFilter implements TextFilter {
         double spacing = (totalWidth - calculateTotalWidthWithoutSpacing(sbText)) / (text.length() - 1);
 
         //SCALE TIME
-        if (!vertical) {
-            double startX = x - totalWidth / 2;
+        if (seperated) {
+            if (!vertical) {
+                double startX = x - totalWidth / 2;
 
-            for (int i = 0; i < text.length(); i++) {
-                final char character = text.charAt(i);
-                final SBChar sbChar = sbText.getChars().get(i);
-                final Sprite sprite = sbChar.getSprite();
+                for (int i = 0; i < text.length(); i++) {
+                    final char character = text.charAt(i);
+                    final SBChar sbChar = sbText.getChars().get(i);
+                    final Sprite sprite = sbChar.getSprite();
 
-                double charWidth = FontUtils.getCharWidth(text, character, sbText.getFont()) * SCALE;
+                    double charWidth = FontUtils.getCharWidth(text, character, sbText.getFont()) * SCALE;
 
-                double newX = startX + charWidth / 2;
+                    double newX = startX + charWidth / 2;
 
-                sprite.MoveX(EASING, sbText.getStartTime(), sbText.getEndTime(), sprite.getX(), newX);
-                sprite.Scale(EASING, sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
+                    sprite.MoveX(EASING, sbText.getStartTime(), sbText.getEndTime(), sprite.getX(), newX);
+                    sprite.Scale(EASING, sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
 
-                startX += charWidth + spacing;
+                    startX += charWidth + spacing;
+                }
+            } else {
+                double startY = y - totalWidth / 2;
+
+                for (int i = 0; i < text.length(); i++) {
+                    final char character = text.charAt(i);
+                    final SBChar sbChar = sbText.getChars().get(i);
+                    final Sprite sprite = sbChar.getSprite();
+
+                    double charWidth = FontUtils.getCharWidth(text, character, sbText.getFont()) * SCALE;
+
+                    double newY = startY + charWidth / 2;
+
+                    sprite.MoveY(EASING, sbText.getStartTime(), sbText.getEndTime(), sprite.getY(), newY);
+                    sprite.Scale(EASING, sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
+
+                    startY += charWidth + spacing;
+                }
             }
         }else {
-            double startY = y - totalWidth / 2;
-
-            for (int i = 0; i < text.length(); i++) {
-                final char character = text.charAt(i);
-                final SBChar sbChar = sbText.getChars().get(i);
-                final Sprite sprite = sbChar.getSprite();
-
-                double charWidth = FontUtils.getCharWidth(text, character, sbText.getFont()) * SCALE;
-
-                double newY = startY + charWidth / 2;
-
-                sprite.MoveY(EASING, sbText.getStartTime(), sbText.getEndTime(), sprite.getY(), newY);
-                sprite.Scale(EASING, sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
-
-                startY += charWidth + spacing;
-            }
+            final Sprite sprite = sbText.getMainSprite();
+            sprite.Scale(EASING, sbText.getStartTime(), sbText.getEndTime(), 1, SCALE);
         }
     }
 

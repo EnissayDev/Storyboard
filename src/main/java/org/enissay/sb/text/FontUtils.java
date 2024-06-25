@@ -56,13 +56,14 @@ public class FontUtils {
 
         // Save the image to file
         try {
-            ClassLoader classLoader = Main.class.getClassLoader();
-            File file = new File(classLoader.getResource("sb").getFile() + "\\font\\" + img_name + ".png");
+            //ClassLoader classLoader = storyboard.getMainClass().getClassLoader();
+            //File file = new File(classLoader.getResource("sb").getFile() + "\\font\\" + img_name + ".png");
+            File file = new File(storyboard.getAssetsPath() + "\\font\\" + img_name + ".png");
             if (!file.exists()) file.mkdirs();
             //this.filePath = (storyboard.getPath() + "\\sb\\font\\" + img_name + ".png");
             ImageIO.write(img, "png", file);
 
-            //System.out.println("Successfully created image text " + img_name + ".png");
+            System.out.println("Successfully created image text " + img_name + ".png");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -108,11 +109,27 @@ public class FontUtils {
         return g2d.getFontMetrics().charWidth(c);
     }
 
-    public static Font getCustomFont(final String name, final float size) {
+    //REQUIRES A FILE NAME customFont IN RESOURCES
+    public static Font getCustomFont(final Storyboard sb, final String name, final float size) {
         Font font;
         try {
-            ClassLoader classLoader = Main.class.getClassLoader();
-            File file = new File(classLoader.getResource("customFont").getFile() + "\\" + name + ".otf");
+            //ClassLoader classLoader = sb.getMainClass().getClassLoader();
+            //File file = new File(classLoader.getResource("customFont").getFile() + "\\" + name + ".otf");
+            File file = new File(sb.getAssetsPath() + "\\" + name + ".otf");
+            if (!file.exists()) file.mkdirs();
+            font = Font.createFont(Font.TRUETYPE_FONT, file);
+        } catch (FontFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        font  = font.deriveFont(Font.BOLD, size);
+        return font;
+    }
+
+    public static Font getCustomFont(final File file, final float size) {
+        Font font;
+        try {
             if (!file.exists()) file.mkdirs();
             font = Font.createFont(Font.TRUETYPE_FONT, file);
         } catch (FontFormatException e) {

@@ -21,9 +21,10 @@ public class SBText {
     //private Sprite mainSprite;
     private Color color;
     private LinkedList<SBChar> chars;
-    private boolean vertical = false;
+    private boolean vertical = false, seperatedChars = false;
+    private Sprite mainSprite;
 
-    public SBText(String name, Storyboard sb, String text, Font font, long startTime, long endTime, double x, double y, Color color, boolean vertical) {
+    public SBText(String name, Storyboard sb, String text, Font font, long startTime, long endTime, double x, double y, Color color, boolean vertical, boolean seperatedChars) {
         this.name = name;
         this.storyboard = sb;
         this.text = text;
@@ -35,7 +36,9 @@ public class SBText {
         this.color = color;
         this.chars = new LinkedList<>();
         this.vertical = vertical;
-        sb.addEffect(TextGenerator.class, startTime, endTime, this, vertical);
+        this.seperatedChars = seperatedChars;
+        //sb.addText(this);
+        sb.addEffect(TextGenerator.class, startTime, endTime, this, vertical, seperatedChars);
         /*sb.addEffect(TextGenerator.class, startTime, endTime, new String[]{font , String.valueOf(size), text,
                 String.valueOf(Origin.TOP_CENTRE.getX()), String.valueOf(Origin.TOP_CENTRE.getY()), "true"});*/
         //this.mainSprite = new Sprite(name + "-" + (sb.getTexts().size() + 1), Layer.FOREGROUND, Origin.CENTRE, "sb\\font\\" + name + "-" + (sb.getTexts().size() + 1) + ".png", x, y);
@@ -78,7 +81,12 @@ public class SBText {
         this.y = y;
         this.color = color;
         this.chars = new LinkedList<>();
+        //sb.addText(this);
         sb.addEffect(TextGenerator.class, startTime, endTime, this);
+    }
+
+    public boolean isSeperatedChars() {
+        return seperatedChars;
     }
 
     public boolean isVertical() {
@@ -135,14 +143,24 @@ public class SBText {
         return sprites;
     }
 
+    public void setMainSprite(Sprite mainSprite) {
+        this.mainSprite = mainSprite;
+    }
+
+    public Sprite getMainSprite() {
+        return mainSprite;
+    }
+
     public SBText addFilter(TextFilter filter) {
         filter.apply(this);
         return this;
     }
 
     public void apply() {
+        if (seperatedChars)
         chars.forEach(c -> {
             this.storyboard.addObject(c.getSprite());
         });
+        else this.storyboard.addObject(getMainSprite());
     }
 }

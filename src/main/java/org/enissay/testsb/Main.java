@@ -3,22 +3,23 @@ package org.enissay.testsb;
 import org.enissay.osu.data.TimingPoint;
 import org.enissay.sb.*;
 import org.enissay.sb.cmds.Easing;
+import org.enissay.sb.effects.impl.InfosBar;
+import org.enissay.sb.effects.impl.Particles;
+import org.enissay.sb.effects.impl.ProgressBar;
+import org.enissay.sb.effects.impl.Spectrum;
 import org.enissay.sb.obj.Origin;
 import org.enissay.sb.text.FontUtils;
 import org.enissay.sb.text.SBText;
 import org.enissay.sb.text.filters.GlitchFilter;
 import org.enissay.sb.text.filters.ShakeFilter;
+import org.enissay.sb.text.filters.ZoomFilter;
+import org.enissay.sb.utils.FFTUtils;
 import org.enissay.sb.utils.OsuUtils;
-import org.enissay.testsb.effects.*;
-import org.quifft.QuiFFT;
-import org.quifft.output.FFTFrame;
-import org.quifft.output.FFTStream;
 
-import javax.sound.sampled.*;
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
 
@@ -31,15 +32,15 @@ public class Main {
     private static long MAP_START = -1000;
 
     public static void main(String[] args) {
-        Storyboard sb = new Storyboard("C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638490582521645685-audio", "Insane")
+        Storyboard sb = new Storyboard("", "C:\\Users\\Yassine\\AppData\\Local\\osu!\\Songs\\beatmap-638490582521645685-audio", "Insane")
                 .addEffect(InfosBar.class, MAP_START, MAP_END, null)
                 .addEffect(Particles.class, MAP_START, MAP_END, null);
                 //.addEffect(TestEffect.class, MAP_START, 10000, null);
-                //.addEffect(Spectrum.class, MAP_START, MAP_END, null);
+                //.addEffect(Spectrum.class, MAP_START + 2000, MAP_START + 100000, null);
 
         var barHeight = OsuUtils.getImageDim(sb.getPath() + "\\sb\\bar2.png").getHeight() * .3;
         sb.addEffect(ProgressBar.class, MAP_START, MAP_END, (double)Constants.EDITOR_X - 20, barHeight*7, 1.55d);
-
+        System.out.println(sb.getBeatmap().getTitle());
         var height = OsuUtils.getImageDim(sb.getPath() + "\\sb\\bar.jpg").getHeight() * .4;
 
         /*SBText timeText = new SBText("timeText", sb, "TIME", FontUtils.getCustomFont("okine", 20), MAP_START, MAP_END, (double)Constants.EDITOR_X - 10, height/2 - 20, Color.WHITE)
@@ -51,7 +52,7 @@ public class Main {
                 .addFilter(new ZoomFilter(2f));
         timeText.apply();*/
 
-        SBText timeText2 = new SBText("timeText", sb, "TIME", FontUtils.getCustomFont("okine", 20), MAP_START, MAP_END, (double)Constants.EDITOR_X - 20, height/2 - 20, Color.WHITE)
+        SBText timeText2 = new SBText("timeText", sb, "TIME", FontUtils.getCustomFont(sb, "okine", 20), MAP_START, MAP_END, (double)Constants.EDITOR_X - 20, height/2 - 20, Color.WHITE)
                 .addFilter(new GlitchFilter());
         timeText2.apply();
         int elements = 2;
@@ -95,11 +96,11 @@ public class Main {
         for (int i = 0; i < sections.length - 1; i++) {
             String sectionName = sectionNames[i % sectionNames.length];
 
-            SBText sbText = new SBText("section-" + i, sb, sectionName, FontUtils.getCustomFont("phonk", 20), sections[i], sections[i + 1],
-                    Origin.CENTRE.getX()/6, Origin.CENTRE.getY(), Color.WHITE, false)
+            SBText sbText = new SBText("section-" + i, sb, sectionName, FontUtils.getCustomFont(sb, "phonk", 20), sections[i], sections[i + 1],
+                    Origin.CENTRE.getX()/6, Origin.CENTRE.getY(), Color.WHITE, false, false)
                     .addFilter(new GlitchFilter())
-                    .addFilter(new ShakeFilter(7, 5, 10));
-                    //.addFilter(new ZoomFilter(Easing.LINEAR, 1.25f));
+                    .addFilter(new ShakeFilter(7, 5, 10))
+                    .addFilter(new ZoomFilter(Easing.LINEAR, 1.25f));
 
             sbText.apply();
         }
@@ -114,15 +115,15 @@ public class Main {
         //sb.addText(sbText);
         sbText2.apply();*/
 
-        SBText bpmText = new SBText("bpmText", sb, "BPM", FontUtils.getCustomFont("okine", 20), MAP_START, MAP_END, (Origin.TOP_CENTRE.getX()/6)/(elements+2) - 25, height/2 - 20, Color.WHITE)
+        SBText bpmText = new SBText("bpmText", sb, "BPM", FontUtils.getCustomFont(sb, "okine", 20), MAP_START, MAP_END, (Origin.TOP_CENTRE.getX()/6)/(elements+2) - 25, height/2 - 20, Color.WHITE, false, false)
                 .addFilter(new GlitchFilter());
         bpmText.apply();
 
-        SBText mapperText = new SBText("mapperText", sb, "MAPPER", FontUtils.getCustomFont("okine", 20), MAP_START, MAP_END, (Origin.TOP_CENTRE.getX()/6)/(elements+2) + ((Origin.TOP_CENTRE.getX()/6) * 1)*elements, height/2 - 20, Color.WHITE)
+        SBText mapperText = new SBText("mapperText", sb, "MAPPER", FontUtils.getCustomFont(sb, "okine", 20), MAP_START, MAP_END, (Origin.TOP_CENTRE.getX()/6)/(elements+2) + ((Origin.TOP_CENTRE.getX()/6) * 1)*elements, height/2 - 20, Color.WHITE, false, false)
                 .addFilter(new GlitchFilter());
         mapperText.apply();
 
-        SBText mapper = new SBText("mapper", sb, sb.getBeatmap().getMapper(), FontUtils.getCustomFont("phonk", 20), MAP_START, MAP_END, (Origin.TOP_CENTRE.getX()/6)/(elements+2) + ((Origin.TOP_CENTRE.getX()/6) * 1)*elements, height/2 - 3, Color.WHITE)
+        SBText mapper = new SBText("mapper", sb, sb.getBeatmap().getMapper(), FontUtils.getCustomFont(sb, "phonk", 20), MAP_START, MAP_END, (Origin.TOP_CENTRE.getX()/6)/(elements+2) + ((Origin.TOP_CENTRE.getX()/6) * 1)*elements, height/2 - 3, Color.WHITE, false, false)
                 .addFilter(new GlitchFilter());
         mapper.apply();
 
@@ -130,7 +131,7 @@ public class Main {
                 .addFilter(new GlitchFilter());
         mapper.apply();*/
 
-        System.out.println(sb.toString());
+        //System.out.println(sb.toString());
         List<TimingPoint> bpmSections = sb.getBeatmap().getBPMSections();
         int size = bpmSections.size();
         for (int i = 0; i < size; i++) {
@@ -141,7 +142,8 @@ public class Main {
             }else nextTime = Integer.MAX_VALUE;
             Color color = numberToColor((int) currentSection.getBPM());
 
-            SBText bpmCounter = new SBText("bpmCounter", sb, "" + (long)currentSection.getBPM(), FontUtils.getCustomFont("phonk", 20), (long) currentSection.getTime(), nextTime, (Origin.TOP_CENTRE.getX()/6)/(elements+2) - 25, height/2 - 3, color)
+            SBText bpmCounter = new SBText("bpmCounter", sb, "" + (long)currentSection.getBPM(), FontUtils.getCustomFont(sb, "phonk", 20), (long) currentSection.getTime(), nextTime, (Origin.TOP_CENTRE.getX()/6)/(elements+2) - 25, height/2 - 3, color,
+                    false, true)
                     .addFilter(new GlitchFilter());
             //sb.addText(sbText);
             bpmCounter.apply();
@@ -150,6 +152,10 @@ public class Main {
                     String.valueOf(color.getRed()),String.valueOf(color.getGreen()),String.valueOf(color.getBlue())});*/
         }
         sb.write();
+
+        FFTUtils fftUtils = new FFTUtils(new File(sb.getPath() + "\\audio.mp3"));
+        float[] fft1 = fftUtils.getFft(1000, 20, Easing.LINEAR, 0);
+        System.out.println(Arrays.toString(fft1));
 
         /*System.out.println(sb.toString());
 

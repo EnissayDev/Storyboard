@@ -36,31 +36,49 @@ public class ShakeFilter implements TextFilter {
         //int loopCount = Math.max(1, (int) Math.floor(duration / LIFE_TIME));
         //int loopCount = LIFE_TIME/100;
         int loopCount = 5;
+        Random random = new Random();
         //float loopDuration = duration / loopCount;
 
         //int loopCount = (int) (duration * iterations / 1000);
         //Random random = new Random();
 
-        int[][] values = getRandomValues(ITERATIONS, STRENGTH);
+        if (text.isSeperatedChars()) {
+            int[][] values = getRandomValues(ITERATIONS, STRENGTH);
 
-        text.getChars().forEach(sbChar -> {
-            final double startX = sbChar.getSprite().getX();
-            final double startY = sbChar.getSprite().getY();
-            final Command loop = sbChar.getSprite().createLoop(text.getStartTime(), loopCount);
+            int finalLoopCount = loopCount;
+            text.getChars().forEach(sbChar -> {
+                final double startX = sbChar.getSprite().getX();
+                final double startY = sbChar.getSprite().getY();
+                final Command loop = sbChar.getSprite().createLoop(text.getStartTime(), finalLoopCount);
 
-            for (int i = 0; i < ITERATIONS; i++) {
+                for (int i = 0; i < ITERATIONS; i++) {
                 /*int randomX = random.nextInt(-horizontalStrength, horizontalStrength);
                 int randomY = random.nextInt(-verticalStrength, verticalStrength);*/
-                int randomX = values[i][0];
-                int randomY = values[i][1];
+                    int randomX = values[i][0];
+                    int randomY = values[i][1];
 
-                loop.addSubCommand(sbChar.getSprite().MoveX(TIME_BETWEEN_SHAKES * i, startX + randomX));
-                loop.addSubCommand(sbChar.getSprite().MoveY(TIME_BETWEEN_SHAKES * i, startY + randomY));
+                    loop.addSubCommand(sbChar.getSprite().MoveX(TIME_BETWEEN_SHAKES * i, startX + randomX));
+                    loop.addSubCommand(sbChar.getSprite().MoveY(TIME_BETWEEN_SHAKES * i, startY + randomY));
+                }
+                loop.addSubCommand(sbChar.getSprite().MoveX(TIME_BETWEEN_SHAKES * (ITERATIONS - 1), startX));
+                loop.addSubCommand(sbChar.getSprite().MoveY(TIME_BETWEEN_SHAKES * (ITERATIONS - 1), startY));
+                text.getStoryboard().addObject(sbChar.getSprite());
+            });
+        }else {
+            final double startX = text.getMainSprite().getX();
+            final double startY = text.getMainSprite().getY();
+            final Command loop = text.getMainSprite().createLoop(text.getStartTime(), loopCount);
+            for (int i = 0; i < ITERATIONS; i++) {
+                int randomX = random.nextInt(-STRENGTH, STRENGTH);
+                int randomY = random.nextInt(-STRENGTH, STRENGTH);
+
+                Command moveX = text.getMainSprite().MoveX(TIME_BETWEEN_SHAKES * i, startX, startX + randomX);
+                Command moveY = text.getMainSprite().MoveY(TIME_BETWEEN_SHAKES * i, startY, startY + randomY);
+                loop.addSubCommand(moveX);
+                loop.addSubCommand(moveY);
             }
-            loop.addSubCommand(sbChar.getSprite().MoveX(TIME_BETWEEN_SHAKES * (ITERATIONS - 1), startX));
-            loop.addSubCommand(sbChar.getSprite().MoveY(TIME_BETWEEN_SHAKES * (ITERATIONS - 1), startY));
-            text.getStoryboard().addObject(sbChar.getSprite());
-        });
+            text.getStoryboard().addObject(text.getMainSprite());
+        }
 
         /**
          * int interval = 50;

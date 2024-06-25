@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.guicedee.services:commons-io:1.0.14.1-jre8">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/guicedee/services/commons-io/1.0.14.1-jre8/commons-io-1.0.14.1-jre8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/guicedee/services/commons-io/1.0.14.1-jre8/commons-io-1.0.14.1-jre8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/guicedee/services/commons-io/1.0.14.1-jre8/commons-io-1.0.14.1-jre8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

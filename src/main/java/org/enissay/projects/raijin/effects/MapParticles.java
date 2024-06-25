@@ -1,4 +1,4 @@
-package org.enissay.testsb.effects;
+package org.enissay.projects.raijin.effects;
 
 import org.enissay.sb.Storyboard;
 import org.enissay.sb.cmds.Command;
@@ -8,11 +8,10 @@ import org.enissay.sb.obj.Layer;
 import org.enissay.sb.obj.Origin;
 import org.enissay.sb.obj.impl.Sprite;
 
-import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.Random;
 
-public class Particles implements Effect {
+public class MapParticles implements Effect {
 
     private String PATH = "sb\\particle.png";
     private Vector2 SCALE = new Vector2(.1f, .1f);//0.05

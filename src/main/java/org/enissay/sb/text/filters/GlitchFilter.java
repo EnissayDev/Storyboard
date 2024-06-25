@@ -17,55 +17,86 @@ public class GlitchFilter implements TextFilter {
     @Override
     public void apply(SBText sbText) {
         final long startTime = sbText.getStartTime();
-        final long endTime = sbText.getStartTime() + 100;
+        final long endTime = sbText.getStartTime() + 200;
         final String text = sbText.getText();
         final double ogX = sbText.getX();//320
         final double ogY = sbText.getY();//240
         final Font font = sbText.getFont();
         final Storyboard storyboard = sbText.getStoryboard();
         final boolean vertical = sbText.isVertical();
+        final boolean seperated = sbText.isSeperatedChars();
 
+        //System.out.println("SEPERATED GLITCH " + seperated + " for " + sbText.getText());
         /*final Sprite spriteRed = new Sprite("t-" + storyboard.getTexts().size() + "-red", Layer.OVERLAY, Origin.TOP_CENTRE,
                 redPath, x, y);*/
-        final SBText blue = new SBText("glitchRed", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(22, 126, 140, 255), vertical);//T-3
-        final SBText red = new SBText("glitchBlue", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(169, 42, 21, 255), vertical);//T-2
+        final SBText blue = new SBText("glitchRed", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(22, 126, 140, 255), vertical, seperated);//T-3
+        final SBText red = new SBText("glitchBlue", storyboard, text, font, startTime, endTime, ogX, ogY, new Color(169, 42, 21, 255), vertical, seperated);//T-2
 
         final Easing easingStyle = Easing.BACK_IN_OUT;
 
-        red.getChars().forEach(sbChar -> {
-            Sprite spriteRed = sbChar.getSprite();
+        if (seperated) {
+            red.getChars().forEach(sbChar -> {
+                Sprite spriteRed = sbChar.getSprite();
+                double x = spriteRed.getX();
+
+                spriteRed.MoveX(easingStyle, startTime, startTime + 50, x - 7, x - 5);
+                spriteRed.MoveX(easingStyle, startTime + 50, startTime + 100, x - 5, x - 2);
+                spriteRed.Fade(easingStyle, startTime, startTime + 100, 0.7, 0.7);
+                spriteRed.Fade(startTime + 100, startTime + 100, 0.7, 0);
+
+                spriteRed.MoveX(easingStyle, endTime - 100, endTime - 50, x - 7, x - 5);
+                spriteRed.MoveX(easingStyle, endTime - 50, endTime, x - 5, x - 2);
+                spriteRed.Fade(easingStyle, endTime - 100, endTime - 50, 0.7, 0.7);
+                spriteRed.Fade(endTime - 50, endTime, 0.7, 0);
+
+                //if (!Objects.isNull(SCALE)) red.addFilter(new ZoomFilter(SCALE));
+            });
+
+            blue.getChars().forEach(sbChar -> {
+                Sprite spriteBlue = sbChar.getSprite();
+                double x = spriteBlue.getX();
+
+                spriteBlue.MoveX(easingStyle, startTime, startTime + 50, x + 7, x + 5);
+                spriteBlue.MoveX(easingStyle, startTime + 50, startTime + 100, x + 5, x + 2);
+                spriteBlue.Fade(easingStyle, startTime, startTime + 100, 0.7, 0.7);
+                spriteBlue.Fade(startTime + 100, startTime + 100, 0.7, 0);
+
+                spriteBlue.MoveX(easingStyle, endTime - 100, endTime - 50, x + 7, x + 5);
+                spriteBlue.MoveX(easingStyle, endTime - 50, endTime, x + 5, x + 2);
+                spriteBlue.Fade(easingStyle, endTime - 100, endTime - 50, 0.7, 0.7);
+                spriteBlue.Fade(endTime - 50, endTime, 0.7, 0);
+
+                //if (!Objects.isNull(SCALE)) blue.addFilter(new ZoomFilter(SCALE));
+            });
+        }else {
+            final Sprite spriteRed = red.getMainSprite();
+            final Sprite spriteBlue = blue.getMainSprite();
+
             double x = spriteRed.getX();
 
             spriteRed.MoveX(easingStyle, startTime, startTime + 50, x - 7, x - 5);
-            spriteRed.MoveX(easingStyle, startTime + 50, startTime + 100, x - 5,x - 2);
-            spriteRed.Fade(easingStyle, startTime, startTime + 100, 0.7, 0.7);
-            spriteRed.Fade(startTime + 100, startTime + 100, 0.7, 0);
+            spriteRed.MoveX(easingStyle, startTime + 50, startTime + 100, x - 5, x - 2);
+            spriteRed.Fade(easingStyle, startTime, startTime + 100, 0.7);
+            //spriteRed.Fade(startTime + 100, startTime + 150, 0.7, 0);
 
             spriteRed.MoveX(easingStyle, endTime - 100, endTime - 50, x - 7, x - 5);
             spriteRed.MoveX(easingStyle, endTime - 50, endTime, x - 5, x - 2);
-            spriteRed.Fade(easingStyle, endTime - 100, endTime - 50, 0.7, 0.7);
+            spriteRed.Fade(easingStyle, endTime - 100, endTime - 50, 0.7);
             spriteRed.Fade(endTime - 50, endTime, 0.7, 0);
-
-            //if (!Objects.isNull(SCALE)) red.addFilter(new ZoomFilter(SCALE));
-        });
-
-        blue.getChars().forEach(sbChar -> {
-            Sprite spriteBlue = sbChar.getSprite();
-            double x = spriteBlue.getX();
 
             spriteBlue.MoveX(easingStyle, startTime, startTime + 50, x + 7, x + 5);
             spriteBlue.MoveX(easingStyle, startTime + 50, startTime + 100, x + 5, x + 2);
-            spriteBlue.Fade(easingStyle, startTime, startTime + 100, 0.7, 0.7);
-            spriteBlue.Fade(startTime + 100, startTime + 100, 0.7, 0);
+            spriteBlue.Fade(easingStyle, startTime, startTime + 100, 0.7);
+            //spriteBlue.Fade(startTime + 100, startTime + 100, 0.7, 0);
 
             spriteBlue.MoveX(easingStyle, endTime - 100, endTime - 50, x + 7, x + 5);
             spriteBlue.MoveX(easingStyle, endTime - 50, endTime, x + 5, x + 2);
-            spriteBlue.Fade(easingStyle, endTime - 100, endTime - 50, 0.7, 0.7);
+            spriteBlue.Fade(easingStyle, endTime - 100, endTime - 50, 0.7);
             spriteBlue.Fade(endTime - 50, endTime, 0.7, 0);
 
-            //if (!Objects.isNull(SCALE)) blue.addFilter(new ZoomFilter(SCALE));
-        });
-
+            /*storyboard.addObject(spriteRed);
+            storyboard.addObject(spriteBlue);*/
+        }
         //final Sprite spriteRed = red.getMainSprite();
         //final Sprite spriteBlue = blue.getMainSprite();
 

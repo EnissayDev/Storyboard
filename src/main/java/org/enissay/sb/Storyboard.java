@@ -75,27 +75,29 @@ public class Storyboard{
      *  F,0,41732,42232,0.5,0
      * //Storyboard Sound Samples
      */
-
-    private String path, diffName;
+    private String assetsPath, path, diffName;
     private Beatmap beatmap;
     private LinkedList<SBObject> objects;
     //private LinkedList<String> texts;
     private LinkedList<Class<? extends Effect>> effects;
-    //private LinkedList<SBText> texts;
+    private LinkedList<SBText> texts;
     private LinkedList<SBChar> chars;
 
-    public Storyboard(String path, LinkedList<SBObject> obj, String diffName) {
+
+    public Storyboard(String assetsPath, String path, LinkedList<SBObject> obj, String diffName) {
+        this.assetsPath = assetsPath;
         this.path = path;
         this.objects = obj;
         this.beatmap = BeatmapManager.detectBeatmap(path, diffName);
     }
 
-    public Storyboard(String path, String diffName) {
+    public Storyboard(String assetsPath, String path, String diffName) {
+        this.assetsPath = assetsPath;
         this.path = path;
         this.objects = new LinkedList<>();
         this.beatmap = BeatmapManager.detectBeatmap(path, diffName);
         this.effects = new LinkedList<>();
-        //this.texts = new LinkedList<>();
+        this.texts = new LinkedList<>();
         this.chars = new LinkedList<>();
         /*JavaClassFinder classFinder = new JavaClassFinder();
         List<Class<? extends Effect>> classes = classFinder.findAllMatchingTypes(Effect.class);
@@ -141,6 +143,17 @@ public class Storyboard{
         return false;
     }
 
+    public boolean doesFulltextExist(String text, Font font) {
+        List<SBText> texts = getTexts();
+        if (texts == null) {
+            return false;
+        }
+        for (SBText t : texts) {
+            if (t.getText().equals(text) && t.getFont().equals(font)) return true;
+        }
+        return false;
+    }
+
     public SBChar getExistingChar(char character, /*Color color,*/ Font font) {
         for (SBChar c : chars) {
             if (/*c.getColor().equals(color) && */c.getCharacter() == character && c.getFont().equals(font)) return c;
@@ -148,12 +161,19 @@ public class Storyboard{
         return null;
     }
 
-    /*public void addText(SBText text) {
+    public SBText getExistingText(String text, Font font) {
+        for (SBText c : texts) {
+            if (c.getText().equals(text) && c.getFont().equals(font)) return c;
+        }
+        return null;
+    }
+
+    public void addText(SBText text) {
         this.texts.add(text);
     }
     public LinkedList<SBText> getTexts() {
         return texts;
-    }*/
+    }
 
     public String getPath() {
         return path;
@@ -162,6 +182,10 @@ public class Storyboard{
     public Storyboard addObject(final SBObject obj) {
         if (!objects.contains(obj)) objects.add(obj);
         return this;
+    }
+
+    public String getAssetsPath() {
+        return assetsPath;
     }
 
     public SBObject getSBObject(String name) {
@@ -173,7 +197,7 @@ public class Storyboard{
     }
 
     public List<SBObject> getObjects(final Layer layer) {
-        return this.getObjects().stream().filter(sbObject -> sbObject.getLayer() == layer).collect(Collectors.toList());
+        return this.getObjects().stream().filter(sbObject -> sbObject != null && sbObject.getLayer() == layer).collect(Collectors.toList());
     }
 
     public Storyboard addEffect(Class<? extends Effect> clazz, long startTime, long endTime, Object... params) {
@@ -251,9 +275,10 @@ public class Storyboard{
     }
 
     public void write() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("sb").getFile());
-        String destinationPath = path + "\\"; // Specify the destination path here
+        //ClassLoader classLoader = getMainClass().getClassLoader();
+        //File file = new File(classLoader.getResource("sb").getFile());
+        File file = new File(assetsPath);
+        String destinationPath = path; // Specify the destination path here
         File sourceDir = file;
         try {
             FileOutputStream outputStream = new FileOutputStream(path + "\\" + beatmap.getArtist() + " - " + beatmap.getTitle() + " (" + beatmap.getMapper() + ").osb");
@@ -269,7 +294,6 @@ public class Storyboard{
             if (!destinationDir.exists()) {
                 destinationDir.mkdirs();
             }
-
             deleteDirectory(new File(destinationPath + File.separator + "sb").toPath());
             copyDirectory(sourceDir, new File(destinationPath + File.separator + "sb"));
 
