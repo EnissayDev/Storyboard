@@ -24,7 +24,7 @@ public class SBChar {
         this.x = x;
         this.y = y;
         final String name = character + "-" + (storyboard.getChars().size() + 1);
-        this.sprite = new Sprite(name, Layer.BACKGROUND, Origin.CENTRE, "sb\\font\\" + name + ".png", x, y);//FOREGROUND
+        this.sprite = new Sprite(name, Layer.FOREGROUND, Origin.CENTRE, "sb\\font\\" + name + ".png", x, y);//FOREGROUND
     }
 
     public SBChar(Storyboard storyboard, String filePath, char character, Font font, Color color, double x, double y) {
@@ -35,7 +35,7 @@ public class SBChar {
         this.x = x;
         this.y = y;
         final String name = character + "-" + (storyboard.getChars().size() + 1);
-        this.sprite = new Sprite(name, Layer.BACKGROUND, Origin.CENTRE, filePath, x, y);//FOREGROUND
+        this.sprite = new Sprite(name, Layer.FOREGROUND, Origin.CENTRE, filePath, x, y);//FOREGROUND
     }
 
     public Storyboard getStoryboard() {

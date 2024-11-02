@@ -1,5 +1,6 @@
 package org.enissay.osu;
 
+import org.enissay.osu.data.HitObject;
 import org.enissay.osu.data.TimingPoint;
 import org.enissay.sb.cmds.Easing;
 import org.enissay.sb.utils.OsuUtils;
@@ -22,7 +23,9 @@ import java.util.stream.Collectors;
 public class Beatmap {
 
     private String path, title, diffName, artist, mapper;
+    private double sliderMultiplier;
     private LinkedList<TimingPoint> timingPoints;
+    private LinkedList<HitObject> hitObjects;
 
     public Beatmap(String path, String title, String diffName, String artist, String mapper) {
         this.path = path;
@@ -30,7 +33,20 @@ public class Beatmap {
         this.diffName = diffName;
         this.artist = artist;
         this.mapper = mapper;
+        this.sliderMultiplier = 1;
         this.timingPoints = new LinkedList<>();
+        this.hitObjects = new LinkedList<>();
+    }
+
+    public Beatmap(String path, String title, String diffName, String artist, String mapper, double sliderMultiplier) {
+        this.path = path;
+        this.title = title;
+        this.diffName = diffName;
+        this.artist = artist;
+        this.mapper = mapper;
+        this.sliderMultiplier = sliderMultiplier;
+        this.timingPoints = new LinkedList<>();
+        this.hitObjects = new LinkedList<>();
     }
 
     public String getPath() {
@@ -53,8 +69,24 @@ public class Beatmap {
         return mapper;
     }
 
+    public double getSliderMultiplier() {
+        return sliderMultiplier;
+    }
+
+    public void setSliderMultiplier(double sliderMultiplier) {
+        this.sliderMultiplier = sliderMultiplier;
+    }
+
     public void addTimingPoint(TimingPoint timingPoint) {
         if (!timingPoints.contains(timingPoint)) timingPoints.add(timingPoint);
+    }
+
+    public void addHitObject(HitObject hitObject) {
+        if (!hitObjects.contains(hitObject)) hitObjects.add(hitObject);
+    }
+
+    public LinkedList<HitObject> getHitObjects() {
+        return hitObjects;
     }
 
     public LinkedList<TimingPoint> getTimingPoints() {
@@ -69,8 +101,14 @@ public class Beatmap {
         return list;
     }
 
-    public TimingPoint getTimingPointAt(double time) {
+    /*public TimingPoint getTimingPointAt(double time) {
         return timingPoints.stream().filter(tp -> tp.getTime() == time).findAny().orElse(null);
+    }*/
+    public TimingPoint getTimingPointAt(double time) {
+        return timingPoints.stream()
+                .filter(tp -> tp.getTime() <= time)  // Filter points less than or equal to the given time
+                .max(Comparator.comparingDouble(TimingPoint::getTime))  // Find the largest time point
+                .orElse(null);  // Return null if no such point exists
     }
 
     public List<TimingPoint> getTimingPoints(double startTime, double endTime) {

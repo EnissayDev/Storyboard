@@ -37,7 +37,7 @@ public class Spectrum implements Effect {
         KeyframedValue<Double>[] heightKeyframes = new KeyframedValue[BAR_COUNT];
 
         for (int i = 0; i < BAR_COUNT; i++) {
-            heightKeyframes[i] = new KeyframedValue<>();
+            heightKeyframes[i] = new KeyframedValue<>(null);
         }
         var fftTimeStep = storyboard.getBeatmap().getTimingPointAt(2070).getBeatLength() / BEAT_DIVISOR;
         var fftOffset = fftTimeStep * 0.2;
@@ -71,7 +71,7 @@ public class Spectrum implements Effect {
                 if (height < MINIMAL_HEIGHT) height = MINIMAL_HEIGHT;
                 //System.out.println("i:" + i + " time: " + (time + fftOffset) + " fft:" + fft[i] + " height: " + height);
 
-                heightKeyframes[i].addKeyframe(time, height);
+                heightKeyframes[i].add(time, height);
             }
         }
         //final Random random = new Random();
@@ -79,7 +79,7 @@ public class Spectrum implements Effect {
         for (var i = 0; i < BAR_COUNT; i++)
         {
             var keyframes = heightKeyframes[i];
-            keyframes.simplify1dKeyframes(TOLERANCE);
+            keyframes.simplify1dKeyframes(TOLERANCE, h->h.floatValue());
 
             var bar = new Sprite("", Layer.BACKGROUND, Origin.BOTTOM_LEFT, PATH, -100 + i * barWidth, 400);//layer.CreateSprite(SpritePath, SpriteOrigin, new Vector2(Position.X + i * barWidth, Position.Y));
             bar.Color(startTime, Color.WHITE);
@@ -92,13 +92,34 @@ public class Spectrum implements Effect {
 
             double finalScaleX = scaleX;
             int finalI = i;
+            /**
+             *  keyframes.ForEachPair(
+             *                     (start, end) =>
+             *                     {
+             *                         hasScale = true;
+             *                         bar.ScaleVec(start.Time, end.Time,
+             *                             scaleX, start.Value,
+             *                             scaleX, end.Value);
+             *                     },
+             *                     MinimalHeight,
+             *                     s => (float)Math.Round(s, CommandDecimals)
+             *                 );
+             */
+            final double min = MINIMAL_HEIGHT;
             keyframes.forEachPair((start, end) -> {
                 hasScale.set(true);
                 //System.out.println("i: " + finalI + " " + start.getTime() + ": " + start.getValue() + " -> " + end.getTime() + ": " + end.getValue());
                 bar.VectorScale(Easing.EXPO_IN, (long) start.getTime(), (long) end.getTime(),
                         finalScaleX, start.getValue(),
                         finalScaleX, end.getValue());
-            });
+            }, min, s -> Double.valueOf(Math.round(s)), null, null, false);
+            /*keyframes.forEachPair((start, end) -> {
+                hasScale.set(true);
+                //System.out.println("i: " + finalI + " " + start.getTime() + ": " + start.getValue() + " -> " + end.getTime() + ": " + end.getValue());
+                bar.VectorScale(Easing.EXPO_IN, (long) start.getTime(), (long) end.getTime(),
+                        finalScaleX, start.getValue(),
+                        finalScaleX, end.getValue());
+            });*/
 
             /*List<Double> timeList = new ArrayList<>(map.keySet()); // Convert keys to a list for easier access
 // Initialize currentTime with the first time value

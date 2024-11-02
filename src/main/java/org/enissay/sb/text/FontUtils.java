@@ -127,6 +127,23 @@ public class FontUtils {
         return font;
     }
 
+    public static Font getCustomFont(final Storyboard sb, final String name, final float size, String extension) {
+        Font font;
+        try {
+            //ClassLoader classLoader = sb.getMainClass().getClassLoader();
+            //File file = new File(classLoader.getResource("customFont").getFile() + "\\" + name + ".otf");
+            File file = new File(sb.getAssetsPath() + "\\" + name + "." + extension);
+            if (!file.exists()) file.mkdirs();
+            font = Font.createFont(Font.TRUETYPE_FONT, file);
+        } catch (FontFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        font  = font.deriveFont(Font.BOLD, size);
+        return font;
+    }
+
     public static Font getCustomFont(final File file, final float size) {
         Font font;
         try {

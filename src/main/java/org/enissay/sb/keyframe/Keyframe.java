@@ -1,16 +1,26 @@
 package org.enissay.sb.keyframe;
 
+import org.enissay.sb.cmds.Easing;
+
 import java.util.ArrayList;
 import java.util.List;
 
 // Define a class to hold keyframe data
-public class Keyframe<T extends Number> {
-    private double time;
-    private T value;
+import java.util.function.Function;
 
-    public Keyframe(double time, T value) {
+public class Keyframe<T> {
+    public double time;
+    public T value;
+    public Function<Double, Double> easing;
+
+    public Keyframe(double time, T value, Function<Double, Double> easing) {
         this.time = time;
         this.value = value;
+        this.easing = easing;
+    }
+
+    public Keyframe(double time, T value) {
+        this(time, value, t -> t);
     }
 
     public double getTime() {
@@ -20,5 +30,12 @@ public class Keyframe<T extends Number> {
     public T getValue() {
         return value;
     }
-}
 
+    public Function<Double, Double> getEasing() {
+        return easing;
+    }
+    // Create a new Keyframe with the same value and ease, but a new time
+    public Keyframe<T> withTime(double newTime) {
+        return new Keyframe<>(newTime, this.value, this.easing);
+    }
+}

@@ -68,6 +68,10 @@ public class TimingPoint {
         this.volume = volume;
     }
 
+    public double getSliderMultiplier() {
+        return !isUninherited() ? (beatLength / 100.0) : 1.0;
+    }
+
     public int getEffects() {
         return effects;
     }

@@ -129,28 +129,33 @@ public class TextGenerator implements Effect {
             sbText.getChars().forEach(sbChar -> {
                 final Sprite sprite = sbChar.getSprite();
 
-                sprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 100, 0.3, 1);
+                //sprite.Fade(Easing.LINEAR, startTime, startTime, 1);
+
+                /*sprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 100, 0.3, 1);
                 sprite.Fade(Easing.SINE_IN_OUT, startTime + 100, startTime + 200, 0.3, 1);
                 sprite.Fade(Easing.SINE_IN_OUT, startTime + 200, startTime + 300, 1, 0.6);
                 sprite.Fade(Easing.SINE_IN_OUT, startTime + 300, startTime + 350, .6, 1);
 
-                sprite.Fade(endTime - 100, endTime, 1, .3);
+                sprite.Fade(endTime - 100, endTime, 1, .3);*/
+
             });
         }else {
             if (!sb.doesFulltextExist(text, font)) {
                 final String name = "ft-" + (sb.getTexts().size() + 1);
-                Sprite textSprite = new Sprite(name, Layer.BACKGROUND, Origin.CENTRE, "sb\\font\\" + name + ".png", x, y);
-                //            textSprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 300, 0, 1);
+                Sprite textSprite = new Sprite(name, Layer.FOREGROUND, Origin.CENTRE, "sb\\font\\" + name + ".png", x, y);
+                /*textSprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 300, 0, 1);
+                textSprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 100, 0.3, 1);
+
                 textSprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 100, 0.3, 1);
                 textSprite.Fade(Easing.SINE_IN_OUT, startTime + 100, startTime + 200, 0.3, 1);
                 textSprite.Fade(Easing.SINE_IN_OUT, startTime + 200, startTime + 300, 1, 0.6);
                 textSprite.Fade(Easing.SINE_IN_OUT, startTime + 300, startTime + 350, .6, 1);
 
-                textSprite.Fade(endTime - 100, endTime, 1, .3);
+                textSprite.Fade(endTime - 100, endTime, 1, .3);*/
                 FontUtils.convert(sb, text, name, font, color == null ? Color.WHITE : color, null);
                 textSprite.Color(startTime, color);
-                textSprite.Fade(startTime,1);
-                textSprite.Fade(endTime,0);
+                //textSprite.Fade(startTime,1);
+                //textSprite.Fade(endTime,0);
                 sbText.setMainSprite(textSprite);
                 sb.addText(sbText);
                 //System.out.println("[FONT] Created text " + textSprite.getName());
@@ -160,18 +165,18 @@ public class TextGenerator implements Effect {
                 if (foundText != null && foundText.getMainSprite() != null) {
                     //final SBText textCopy = new SBText(foundText.getName(), sb, foundText.getText(), foundText.getFont(), startTime, endTime, x, y, null);
                     //System.out.println("[FONT] Found existing text " + foundText.getText());
-                    Sprite textSprite = new Sprite(foundText.getName(), Layer.BACKGROUND, Origin.CENTRE, foundText.getMainSprite().getFilePath(), x, y);
+                    Sprite textSprite = new Sprite(foundText.getName(), Layer.FOREGROUND, Origin.CENTRE, foundText.getMainSprite().getFilePath(), x, y);
                     //            textSprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 300, 0, 1);
-                    textSprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 100, 0.3, 1);
+                    /*textSprite.Fade(Easing.SINE_IN_OUT, startTime, startTime + 100, 0.3, 1);
                     textSprite.Fade(Easing.SINE_IN_OUT, startTime + 100, startTime + 200, 0.3, 1);
                     textSprite.Fade(Easing.SINE_IN_OUT, startTime + 200, startTime + 300, 1, 0.6);
-                    textSprite.Fade(Easing.SINE_IN_OUT, startTime + 300, startTime + 350, .6, 1);
+                    textSprite.Fade(Easing.SINE_IN_OUT, startTime + 300, startTime + 350, .6, 1);*/
                     textSprite.Color(startTime, color);
 
-                    textSprite.Fade(endTime - 100, endTime, 1, .3);
+                    //textSprite.Fade(endTime - 100, endTime, 1, .3);
                     textSprite.Color(startTime, color);
-                    textSprite.Fade(startTime,1);
-                    textSprite.Fade(endTime,0);
+                    //textSprite.Fade(startTime,1);
+                    //textSprite.Fade(endTime,0);
                     sbText.setMainSprite(textSprite);
                 }
             }

@@ -39,7 +39,7 @@ public class Particles implements Effect {
         int loopCount = Math.max(1, (int) Math.floor(duration / LIFETIME));
 
         for (int i = 0; i < PARTICLE_COUNT; i++) {
-            double spawnAngle = random.nextDouble() * 2 * Math.PI;
+                double spawnAngle = random.nextDouble() * 2 * Math.PI;
             float spawnDistance = (float) (SPAWN_SPREAD * Math.sqrt(random.nextDouble()));
 
             float moveAngle = (float) Math.toRadians(ANGLE + random.nextFloat(-ANGLE_SPREAD, ANGLE_SPREAD) * 0.5f);
@@ -83,8 +83,8 @@ public class Particles implements Effect {
                 particle.Parameter(startTime, endTime, 'A');
 
             Command loop = particle.createLoop(startTime, loopCount);
-            loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()));
-            loop.addSubCommand(particle.Fade(Easing.EASING_IN, (int) (loopDuration * 0.8), (int) loopDuration, color.getAlpha(), 0));
+            loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()/255));
+            loop.addSubCommand(particle.Fade(Easing.EASING_IN, (int) (loopDuration * 0.8), (int) loopDuration, color.getAlpha()/255, 0));
             loop.addSubCommand(particle.Move(EASING, 0, (int) loopDuration, startPosition.x, startPosition.y, endPosition.x, endPosition.y));
 
             storyboard.addObject(particle);

@@ -32,5 +32,7 @@
     <orderEntry type="library" name="Maven: com.googlecode.soundlibs:mp3spi:1.9.5.4" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.soundlibs:jlayer:1.0.1.4" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:3.8.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jmonkeyengine:jme3-core:3.5.2-stable" level="project" />
+    <orderEntry type="library" name="Maven: org.joml:joml:1.10.8" level="project" />
   </component>
 </module>
