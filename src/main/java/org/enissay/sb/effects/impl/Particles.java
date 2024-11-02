@@ -7,112 +7,119 @@ import org.enissay.sb.effects.Effect;
 import org.enissay.sb.obj.Layer;
 import org.enissay.sb.obj.Origin;
 import org.enissay.sb.obj.impl.Sprite;
+import org.enissay.sb.utils.Vector2;
 
-import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.Random;
 
 public class Particles implements Effect {
 
-    private String PATH = "sb\\particle.png";
-    private Vector2 SCALE = new Vector2(.1f, .1f);//0.05
-
-    private Origin ORIGIN = Origin.CENTRE;
-    private float ROTATION = 0;
-    private Color COLOR = Color.WHITE;
-    private float COLOR_VARIANCE = 0.1f;
-    private boolean ADDITIVE = false;
-    private int PARTICLE_COUNT = 50;//32
-    private float LIFETIME = 1000*20;
-    private Vector2 SPAWN_ORIGIN = new Vector2(Origin.TOP_RIGHT.getX(), Origin.TOP_RIGHT.getY());
-    private float SPAWN_SPREAD = 360;
-    private float ANGLE = 180;//110
-    private float ANGLE_SPREAD = 60;
-    private float SPEED = 420;
-    private Easing EASING = Easing.LINEAR;
-
     private Random random = new Random();
 
     @Override
-    public void render(Storyboard storyboard, long START_TIME, long END_TIME, Object... params) {
-        long duration = END_TIME - START_TIME;
-        int loopCount = Math.max(1, (int) Math.floor(duration / LIFETIME));
+    public void render(Storyboard storyboard, long startTime, long endTime, Object... params) {
+        /**
+         *  private String path;
+         *     private Vector2 scale = new Vector2(1f, 1f);
+         *     private Origin origin = Origin.CENTRE;
+         *
+         *     private float rotation;
+         *     private Color color;
+         *
+         *     private float colorVariance = .6f;
+         *     private boolean additive = false;
+         *
+         *     private int particleCount = 32;
+         *     private float lifeTime = 1000;
+         *     private Vector2 spawnOrigin = new Vector2(420, 0);
+         *     private float spawnSpread = 360;
+         *
+         *     private float angle = 110;
+         *     private float angleSpread = 60;
+         *     private float speed = 480;
+         *     private Easing easing = Easing.LINEAR;
+         */
+        final String path = (String) params[0];
+        final Vector2 initialScale = (Vector2) params[1];
+        final Vector2 scale = (Vector2) params[2];
+        final Origin origin = (Origin) params[3];
 
-        for (int i = 0; i < PARTICLE_COUNT; i++) {
-                double spawnAngle = random.nextDouble() * 2 * Math.PI;
-            float spawnDistance = (float) (SPAWN_SPREAD * Math.sqrt(random.nextDouble()));
+        final float rotation = (float) params[4];
+        Color color = (Color)params[5];
 
-            float moveAngle = (float) Math.toRadians(ANGLE + random.nextFloat(-ANGLE_SPREAD, ANGLE_SPREAD) * 0.5f);
-            float moveDistance = SPEED * LIFETIME * 0.001f;
+        float colorVariance = (float)params[6];
+        final boolean additive = (boolean)params[7];
 
-            float spriteRotation = moveAngle + (float) Math.toRadians(ROTATION);
+        final int particleCount = (int)params[8];
+        final float lifeTime = (float)params[9];
+        final Vector2 spawnOrigin = (Vector2)params[10];
+        final float spawnSpread = (float)params[11];
 
-            Vector2 startPosition = SPAWN_ORIGIN.add(new Vector2((float) Math.cos(spawnAngle), (float) Math.sin(spawnAngle)).multiply(spawnDistance));
+        final float angle = (float)params[12];
+        final float angleSpread = (float)params[13];
+        final float speed = (float)params[14];
+        final Easing easing = (Easing) params[15];
+        final float opacity = (float) params[16];
+
+        double duration = (double)(endTime - startTime);
+        double loopCount = Math.max(1, Math.floor(duration / lifeTime));
+
+        for (int i = 0; i < particleCount; i++) {
+            double spawnAngle = random.nextDouble() * 2 * Math.PI;
+            float spawnDistance = (float) (spawnSpread * Math.sqrt(random.nextDouble()));
+
+            float moveAngle = (float) Math.toRadians(angle + random.nextFloat(-angleSpread, angleSpread) * 0.5f);
+            float moveDistance = speed * lifeTime * 0.001f;
+
+            float spriteRotation = moveAngle + (float) Math.toRadians(rotation);
+
+            Vector2 startPosition = spawnOrigin.add(new Vector2((float) Math.cos(spawnAngle), (float) Math.sin(spawnAngle)).multiply(spawnDistance));
             Vector2 endPosition = startPosition.add(new Vector2((float) Math.cos(moveAngle), (float) Math.sin(moveAngle)).multiply(moveDistance));
 
-            float loopDuration = duration / loopCount;
-            long startTime = START_TIME + (i * (int) loopDuration) / PARTICLE_COUNT;
-            long endTime = startTime + (int) (loopDuration * loopCount);
+            double loopDuration = (duration / loopCount);
+            var particleStartTime = startTime + (i * (int) loopDuration) / particleCount;
+            var particleEndTime = startTime + (int) (loopDuration * loopCount);
 
-            Color color = COLOR;
-            if (COLOR_VARIANCE > 0) {
-                COLOR_VARIANCE = Math.min(COLOR_VARIANCE, 1);
+            if (colorVariance > 0) {
+                colorVariance = clamp(colorVariance, 0, 1);
 
-                //float[] hsba = rgbToHsl(color.getRed(), color.getGreen(), color.getBlue());
                 float[] hsba = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-                float sMin = Math.max(0, hsba[1] - COLOR_VARIANCE * 0.5f);
-                float sMax = Math.min(sMin + COLOR_VARIANCE, 1);
-                float vMin = Math.max(0, hsba[2] - COLOR_VARIANCE * 0.5f);
-                float vMax = Math.min(vMin + COLOR_VARIANCE, 1);
+                float sMin = Math.max(0, hsba[1] - colorVariance * 0.5f);
+                float sMax = Math.min(sMin + colorVariance, 1);
+                float vMin = Math.max(0, hsba[2] - colorVariance * 0.5f);
+                float vMax = Math.min(vMin + colorVariance, 1);
 
                 color = Color.getHSBColor(hsba[0], random.nextFloat((sMin + sMax) / 2), random.nextFloat((vMin + vMax) / 2));
             }
 
-            Sprite particle = new Sprite("particle", Layer.FOREGROUND, ORIGIN, PATH);
-            if (spriteRotation != 0)
-                particle.Rotate(startTime, spriteRotation);
-            if (!color.equals(Color.WHITE))
-                particle.Color(startTime, color);
-            if (!SCALE.equals(new Vector2(1, 1))) {
-                if (SCALE.x != SCALE.y)
-                    particle.VectorScale(startTime, SCALE.x, SCALE.y);
-                else
-                    particle.Scale(startTime, SCALE.x);
-            }
-            if (ADDITIVE)
-                particle.Parameter(startTime, endTime, 'A');
+            Sprite particle = new Sprite("particle", Layer.FOREGROUND, origin, path);
 
-            Command loop = particle.createLoop(startTime, loopCount);
-            loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0, (int) (loopDuration * 0.2), 0, color.getAlpha()/255));
-            loop.addSubCommand(particle.Fade(Easing.EASING_IN, (int) (loopDuration * 0.8), (int) loopDuration, color.getAlpha()/255, 0));
-            loop.addSubCommand(particle.Move(EASING, 0, (int) loopDuration, startPosition.x, startPosition.y, endPosition.x, endPosition.y));
+            if (spriteRotation != 0)
+                particle.Rotate(particleStartTime, spriteRotation);
+            if (color.getRed() != 1 || color.getBlue() != 1 || color.getGreen() != 1)
+                particle.Color(particleStartTime, color);
+            if (scale.x != 1 || scale.y != 1) {
+                if (scale.x != scale.y)
+                    particle.VectorScale(particleStartTime, scale.x, scale.y);
+                else particle.Scale(particleStartTime, scale.x);
+            }
+            if (additive)
+                particle.Parameter(particleStartTime, 'A');
+
+            Command loop = particle.createLoop(particleStartTime, (int) loopCount);
+            //public void Fade(OsbEasing easing, double startTime, double endTime, CommandDecimal startOpacity, CommandDecimal endOpacity
+            //opacity was color.getAlpha()/255
+            loop.addSubCommand(particle.Fade(Easing.EASING_OUT, 0L, (long) (loopDuration * .2), 0, opacity));
+            loop.addSubCommand(particle.Fade(Easing.EASING_IN, (long) (loopDuration * .8), (long) loopDuration, opacity, 0));
+            loop.addSubCommand(particle.Move(easing, 0L, (long) loopDuration, startPosition.x, startPosition.y, endPosition.x, endPosition.y));
+            if (initialScale != null)
+                loop.addSubCommand(particle.VectorScale(0L, (long) loopDuration, initialScale.x, initialScale.y, scale.x, scale.y));
 
             storyboard.addObject(particle);
         }
     }
 
-    private static class Vector2 {
-        public float x, y;
-
-        public Vector2(float x, float y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public Vector2 add(Vector2 other) {
-            return new Vector2(x + other.x, y + other.y);
-        }
-
-        public Vector2 multiply(float scalar) {
-            return new Vector2(x * scalar, y * scalar);
-        }
-
-        public static Vector2 lerp(Vector2 start, Vector2 end, float t) {
-            return start.add(end.subtract(start).multiply(t));
-        }
-
-        public Vector2 subtract(Vector2 other) {
-            return new Vector2(x - other.x, y - other.y);
-        }
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
     }
 }
